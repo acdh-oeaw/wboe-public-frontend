@@ -1,0 +1,49 @@
+
+.absolute{
+  position: absolute;
+}
+.text-light{
+  font-weight: 300;
+}
+.text-uppercase{
+  text-transform: uppercase;
+  letter-spacing: .2em !important;
+}
+
+.application {
+  font-family: 'HKGrotesk', sans-serif
+}
+.application h2 {
+  font-weight: 400;
+}
+
+.theme--light .table tfoot tr{
+  border-top: 0;
+}
+
+table thead tr{
+  border-bottom: 0 !important;
+}
+
+table tfoot .datatable__actions{
+  justify-content: flex-start;
+}
+
+.btn:not(.btn--depressed){
+  box-shadow: none;
+}
+img{
+  transition: opacity .2s;
+}
+img[lazy=loading] {
+  opacity: 0;
+}
+img[lazy=loaded] {
+  opacity: 1;
+}
+.no-outline{
+  outline: 0;
+}
+.bold{
+  font-weight: bold;
+}
