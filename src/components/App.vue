@@ -18,8 +18,9 @@
         color="transparent"
         slider-color="white">
         <v-tab to="/">Main</v-tab>
-        <v-tab to="/articles">Artikel</v-tab>
         <v-tab to="/maps">Karten</v-tab>
+        <v-tab to="/articles">Artikel</v-tab>
+        <v-tab to="/db">Datenbank</v-tab>
       </v-tabs>
     </v-toolbar>
     <v-content>
