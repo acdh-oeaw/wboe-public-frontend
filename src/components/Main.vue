@@ -19,10 +19,10 @@
       /> -->
       <vue-word-cloud
         :enter-animation="{ opacity: 0, transform: 'scale3d(0.3, 1, 0.3)' }"
-        :rotation=".875"
+        :rotation="searchTerm === '' ? .875 : 0"
         :words="filteredWords"
-        :animation-overlap="10"
-        :animation-duration="searchTerm === '' ? 5000 : 1000"
+        :animation-overlap="searchTerm === '' ? 10 : 1"
+        :animation-duration="searchTerm === '' ? 5000 : 500"
         :spacing=".2"
         @update:progress="updateWordProgress"
         font-weight="800"
