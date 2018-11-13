@@ -6,7 +6,7 @@
       tabs
       flat
       scroll-off-screen
-      color="#285495"
+      color="#003263"
       app>
       <v-toolbar-side-icon></v-toolbar-side-icon>
       <v-toolbar-title>LIÖ</v-toolbar-title>
