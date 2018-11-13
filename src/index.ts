@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Main from '@components/Main.vue'
+import App from '@components/App.vue'
 import Vuex from 'vuex'
 import router from '@src/router'
 import VueRouter from 'vue-router'
@@ -11,13 +11,11 @@ import VueLazyload from 'vue-lazyload'
 Vue.config.productionTip = true
 
 Vue.use(Vuex)
-
 Vue.use(VueRouter)
-
 Vue.use(Vuetify)
-Vue.use(VueLazyload, {
-  lazyComponent : true
-})
+Vue.use(VueLazyload, { lazyComponent : true })
+import VueWordCloud from 'vuewordcloud'
+Vue.component(VueWordCloud.name, VueWordCloud)
 // load webfonts asynchronously
 if (window) {
   fontLoader.load({
@@ -31,8 +29,7 @@ if (window) {
 window.onload = () => {
   new Vue({
     el : '#app',
-    render : h => h(Main),
-    router,
-    // store
+    render : h => h(App),
+    router
   })
 }

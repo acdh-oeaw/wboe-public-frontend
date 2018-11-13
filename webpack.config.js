@@ -4,15 +4,11 @@ var webpack = require('webpack')
 var UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 var CopyWebpackPlugin = require('copy-webpack-plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-const FilterWarningsPlugin = require('webpack-filter-warnings-plugin')
 var _ = require('lodash')
 
 module.exports = {
   entry: "./src/index.ts",
   plugins: [
-    new FilterWarningsPlugin({
-      exclude: /\export \'default\' \(imported as \'__vue_script__\'\)/
-    }),
     new CopyWebpackPlugin([
       {
         from: path.resolve(__dirname, "./static"),
