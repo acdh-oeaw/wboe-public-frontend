@@ -4,7 +4,8 @@
       <v-text-field
         autofocus
         flat
-        label="Search"
+        v-model="searchTerm"
+        label="Suche…"
         prepend-inner-icon="search"
         solo
       ></v-text-field>
@@ -19,9 +20,9 @@
       <vue-word-cloud
         :enter-animation="{ opacity: 0, transform: 'scale3d(0.3, 1, 0.3)' }"
         :rotation=".875"
-        :words="words"
+        :words="filteredWords"
         :animation-overlap="10"
-        :animation-duration="5000"
+        :animation-duration="searchTerm === '' ? 5000 : 1000"
         :spacing=".2"
         @update:progress="updateWordProgress"
         font-weight="800"
@@ -44,10 +45,17 @@ import * as _ from 'lodash'
 export default class Main extends Vue {
 
   wordProgress: number|null = null
+  searchTerm: string = ''
 
-  words = randomWords(50).map((w: string) => {
+  words: Array<[string, number]> = randomWords(50).map((w: string) => {
     return [w, _.random(1, 5, true)]
   })
+
+  get filteredWords() {
+    return this.words.filter(w => {
+      return w[0].toLowerCase().indexOf(this.searchTerm.toLowerCase()) > -1
+    })
+  }
 
   updateWordProgress(e: any) {
     if (e !== null) {
