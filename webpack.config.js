@@ -15,13 +15,17 @@ module.exports = {
         to: "./static",
         ignore: [".*"]
       }
-    ]),
-    new CopyWebpackPlugin([
+    ], [
       {
         from: path.resolve(__dirname, "./index.html"),
         to: "index.html"
       }
-    ])
+    ], [
+      {
+        from: path.resolve(__dirname, "./article"),
+        to: "./static/article"
+      }
+    ]),
   ],
   output: {
     path: path.resolve(__dirname, "./dist"),

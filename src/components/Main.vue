@@ -28,7 +28,7 @@
         font-weight="800"
         font-family="HKGrotesk">
       <template slot-scope="{text, weight, word}">
-        <router-link class="word-cloud-link" :to="`/lemma/${text}`">
+        <router-link class="word-cloud-link" :to="`/article/${findArticleByTitle(text).file_name}`">
           {{ text }}
         </router-link>
       </template>
@@ -40,19 +40,31 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import * as randomWords from 'random-words'
 import * as _ from 'lodash'
+import { getArticles } from '../api'
 
 @Component
 export default class Main extends Vue {
 
   wordProgress: number|null = null
   searchTerm: string = ''
+  articles: Array<{title: string, file_name: string}> = []
 
-  words: Array<[string, number]> = randomWords(50).map((w: string) => {
-    return [w, _.random(1, 5, true)]
-  })
+  findArticleByTitle(title: string) {
+    return this.articles.find(a => a.title === title)
+  }
+
+  get words(): string[] {
+    return this.articles.map(w => w.title)
+  }
+
+  get wordsWithWeights(): Array<[string, number]> {
+    return this.words.map((w: string) => {
+      return [w, _.random(1, 5, true)] as [string, number]
+    })
+  }
 
   get filteredWords() {
-    return this.words.filter(w => {
+    return this.wordsWithWeights.filter(w => {
       return w[0].toLowerCase().indexOf(this.searchTerm.toLowerCase()) > -1
     })
   }
@@ -66,8 +78,9 @@ export default class Main extends Vue {
   log(e: any) {
     console.log(e)
   }
-  mounted() {
-    console.log('hello')
+
+  async mounted() {
+    this.articles = await getArticles()
   }
 }
 </script>

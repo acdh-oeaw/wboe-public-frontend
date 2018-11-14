@@ -9,7 +9,8 @@ const cookieSession = require('cookie-session')
 const compression = require('compression')
 const path = require('path')
 const app = express()
-const index = require('fs').readFileSync('./dist/index.html', 'utf8')
+const fs = require('fs')
+var cors = require('cors')
 
 // This app runs behind an
 // application load balancer
@@ -17,6 +18,9 @@ const index = require('fs').readFileSync('./dist/index.html', 'utf8')
 // Negotiation for us, so we must
 // trust them if they say it’s https.
 app.enable('trust proxy')
+
+
+app.use(cors())
 
 // redirect to https if it’s a
 // http call.
@@ -31,6 +35,18 @@ app.use((request, response, next) => {
 })
 
 app.use(compression())
+
+app.get('/articles', (req, res) => {
+  const files = fs.readdirSync(path.join(__dirname, '../dist/static/article'))
+  const articles = files.map((name) => {
+    return {
+      file_name: name,
+      title: fs.readFileSync(path.join(__dirname, '../dist/static/article', name), 'utf8')
+        .match(/(<title>)(.*)(?=<\/title>)/g)[0].replace('<title>', '')
+      }
+  })
+  res.send(articles)
+})
 
 app.use('/', express.static(path.join(__dirname, '../dist')))
 

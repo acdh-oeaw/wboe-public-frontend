@@ -22,7 +22,7 @@
                 "util/*"
             ],
             "@api" : [
-                "api"
+                "api/index.ts"
             ],
             "@api/*": [
                 "api/*"

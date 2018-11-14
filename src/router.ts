@@ -2,6 +2,9 @@ import Router from 'vue-router'
 import Main from '@components/Main.vue'
 import Maps from '@components/Maps.vue'
 import NotFound from '@components/NotFound.vue'
+import Articles from '@components/Articles.vue'
+import Article from '@components/Article.vue'
+
 export default new Router({
   mode : 'history',
   routes : [
@@ -10,10 +13,18 @@ export default new Router({
       component: Main
     },
     {
+      path: '/articles',
+      component: Articles
+    },
+    {
+      path: '/article/:file_name',
+      component: Article,
+      props: true
+    },
+    {
       path: '/maps',
       component: Maps,
     },
-    // TODO: there are more properties to come.
     {
       path: '/maps/:collectionId',
       component: Maps,
@@ -23,5 +34,13 @@ export default new Router({
       path: '*',
       component: NotFound
     },
+    {
+      path: '/db',
+      children: [
+        {
+          path: ''
+        }
+      ]
+    }
   ]
 })
