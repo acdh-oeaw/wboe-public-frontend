@@ -7,7 +7,7 @@
   "scripts": {
     "build": "webpack --mode=production",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "cross-env-shell NODE_ENV=development webpack-dev-server & NODE_PORT=8081 nodemon ./server/index.js",
+    "dev": "cross-env-shell NODE_ENV=development webpack-dev-server & cross-env-shell NODE_PORT=8081 nodemon ./server/index.js",
     "start": "node server/index.js",
     "load-swagger": "curl https://dboeannotation.acdh-dev.oeaw.ac.at > ./swagger.json && swagger-ts-client-generator < swagger.json > ./src/api/swagger.ts"
   },
