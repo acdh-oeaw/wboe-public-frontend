@@ -17,7 +17,7 @@ export default new Router({
       component: Articles
     },
     {
-      path: '/article/:file_name',
+      path: '/articles/:file_name',
       component: Article,
       props: true
     },

@@ -8,6 +8,7 @@
         label="Suche…"
         prepend-inner-icon="search"
         solo
+        clearable
       ></v-text-field>
     </v-flex>
     <v-flex xs12>
@@ -28,7 +29,7 @@
         font-weight="800"
         font-family="HKGrotesk">
       <template slot-scope="{text, weight, word}">
-        <router-link class="word-cloud-link" :to="`/article/${findArticleByTitle(text).file_name}`">
+        <router-link class="word-cloud-link" :to="`/articles/${findArticleByTitle(text).file_name.replace('.xml', '')}`">
           {{ text }}
         </router-link>
       </template>
@@ -38,7 +39,6 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-import * as randomWords from 'random-words'
 import * as _ from 'lodash'
 import { getArticles } from '../api'
 
