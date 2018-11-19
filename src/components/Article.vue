@@ -11,15 +11,6 @@
         :items="articles"
         prepend-inner-icon="search"
       />
-      <!-- <v-text-field
-        autofocus
-        flat
-        :value="title"
-        label="Suche…"
-        prepend-inner-icon="search"
-        solo
-        clearable
-      /> -->
       <div class="article-xml mb-3" v-html="metaXML" />
       <!-- <div v-html="articleXML" class="" /> -->
       <v-expansion-panel expand>
@@ -146,15 +137,19 @@ export default class Article extends Vue {
     font-style: italic;
   }
   sense def{
-    letter-spacing: .1em;
+    letter-spacing: .075em;
   }
   placename[xml\:id] {
     cursor: pointer;
-    color: #003067;
     transition: .25s;
+    background: aliceblue;
+    display: inline-block;
+    padding: 0 9px;
+    border-radius: 14px;
+    font-size: .85em;
     &:hover{
       transform: translateY(-2px);
-      text-decoration: underline;
+      background: darken(aliceblue, $amount: 10)
     }
   }
   sense {
@@ -165,6 +160,7 @@ export default class Article extends Vue {
       content: counter(roman-counter, upper-roman) ". "
     }
     sense {
+      margin-left: 1.5em;
       margin-bottom: 0;
       counter-increment: decimal-counter;
       &::before{
