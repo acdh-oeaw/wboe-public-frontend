@@ -15,7 +15,8 @@
 </template>
 <script lang="ts">
   import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-  import L, { LMap, LTileLayer, LMarker, LGeoJson } from 'vue2-leaflet'
+  import { LMap, LTileLayer, LMarker, LGeoJson } from 'vue2-leaflet'
+  import * as L from 'leaflet'
 
   import axios from 'axios';
 
@@ -66,6 +67,7 @@
       });
     }
     mounted() {
+      console.log(L.latLng(47.413220, -1.219482))
     }
   }
 </script>
