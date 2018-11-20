@@ -49,8 +49,8 @@
       }
     }
     get styleFunction () {
-      const fillColor = this.fillColor
-      return (feature: any, aThis: any = this) => {
+      let aThis: any = this
+      return (feature: any) => {
         let aSigleS: string = feature.properties.sigle.split('.')[0]
         if (!aThis.randomColors[aSigleS]) {
           aThis.randomColors[aSigleS] = '#'+Math.floor(Math.random()*16777215).toString(16)
@@ -65,8 +65,22 @@
       }
     }
     get onEachFeatureFunction () {
+      let aThis: any = this
       return (feature: any, layer: any) => {
         layer.bindTooltip('<div>name:' + feature.properties.name + '</div><div>sigle:' + feature.properties.sigle + '</div><div>sigle:' + feature.properties.sigle.split('.')[0] + '</div>', { permanent: false, sticky: true })
+        layer.on('mouseover', function (this: any) {
+          this.setStyle({
+            fillColor: '#0000ff',
+            fillOpacity: 1
+          });
+        });
+        layer.on('mouseout', function (this: any) {
+          let aSigleS: string = feature.properties.sigle.split('.')[0]
+          this.setStyle({
+            fillColor: aThis.randomColors[aSigleS],
+            fillOpacity: 0.5
+          });
+        });
       }
     }
     created() {
