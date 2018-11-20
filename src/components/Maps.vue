@@ -4,6 +4,9 @@
     <l-map
       :zoom.sync="zoom"
       :center.sync="center">
+      <l-tile-layer
+        :url="url"
+        :attribution="attribution"/>
       <l-geo-json
         v-if="show"
         :geojson="geojson"
@@ -37,6 +40,8 @@
     center: Array<number> = [47.64318610543658, 13.53515625]
     geojson: any = null
     fillColor: string = '#2467a7'
+    url: string = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+    attribution: string = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     get options () {
       return {
         onEachFeature: this.onEachFeatureFunction
