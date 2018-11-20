@@ -42,6 +42,7 @@
     fillColor: string = '#2467a7'
     url: string = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
     attribution: string = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    randomColors: object = {}
     get options () {
       return {
         onEachFeature: this.onEachFeatureFunction
@@ -49,25 +50,29 @@
     }
     get styleFunction () {
       const fillColor = this.fillColor
-      return () => {
+      return (feature: any, aThis: any = this) => {
+        let aSigleS: string = feature.properties.sigle.split('.')[0]
+        if (!aThis.randomColors[aSigleS]) {
+          aThis.randomColors[aSigleS] = '#'+Math.floor(Math.random()*16777215).toString(16)
+        }
         return {
           weight: 1,
-          color: '#FFFFFF',
+          color: '#333333',
           opacity: 1,
-          fillColor: fillColor,
-          fillOpacity: 1
+          fillColor: aThis.randomColors[aSigleS],
+          fillOpacity: 0.5
         }
       }
     }
     get onEachFeatureFunction () {
       return (feature: any, layer: any) => {
-        layer.bindTooltip('<div>name:' + feature.properties.name + '</div><div>sigle:' + feature.properties.sigle + '</div>', { permanent: false, sticky: true })
+        layer.bindTooltip('<div>name:' + feature.properties.name + '</div><div>sigle:' + feature.properties.sigle + '</div><div>sigle:' + feature.properties.sigle.split('.')[0] + '</div>', { permanent: false, sticky: true })
       }
     }
     created() {
       this.loading = true
       axios.get('/static/test_geo.json').then(response => {
-        this.geojson = response.data;
+        this.geojson = response.data
         this.loading = false
       });
     }
