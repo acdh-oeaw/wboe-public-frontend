@@ -45,7 +45,7 @@
     randomColors: object = {}
 
     get displayLocations() {
-      if (this.loc !== null && this.geojson !== null) {
+      if (this.loc && this.geojson) {
         const locations = this.loc.split(',')
         console.log(locations)
         const x = {

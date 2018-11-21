@@ -24,6 +24,7 @@ export default new Router({
     {
       path: '/maps',
       component: Maps,
+      // combine route params and query params into props
       props: (route) => ({ ...route.params, ...route.query })
     },
     {
