@@ -9,7 +9,7 @@
         :attribution="attribution"/>
       <l-geo-json
         v-if="show"
-        :geojson="geojson"
+        :geojson="displayLocations"
         :options="options"
         :optionsStyle="styleFunction"
         />
@@ -32,7 +32,7 @@
     }
   })
   export default class Maps extends Vue {
-    @Prop() prop: string|null
+    @Prop() loc: string|null
 
     loading: boolean = false
     show: boolean = true
@@ -43,6 +43,22 @@
     url: string = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
     attribution: string = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     randomColors: object = {}
+
+    get displayLocations() {
+      if (this.loc !== null && this.geojson !== null) {
+        const locations = this.loc.split(',')
+        console.log(locations)
+        const x = {
+          ...this.geojson,
+          features: this.geojson.features.filter((f: any) => {
+            return locations.indexOf(f.properties.sigle) > -1
+          })
+        }
+        return x
+      } else {
+        return this.geojson
+      }
+    }
     get options () {
       return {
         onEachFeature: this.onEachFeatureFunction

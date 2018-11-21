@@ -24,6 +24,7 @@ export default new Router({
     {
       path: '/maps',
       component: Maps,
+      props: (route) => ({ ...route.params, ...route.query })
     },
     {
       path: '/maps/:collectionId',
