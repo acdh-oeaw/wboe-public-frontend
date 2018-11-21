@@ -2,6 +2,7 @@
   <div style="width: 100%; height: 100%;">
     <span v-if="loading" class="loading">Lade ...</span>
     <l-map
+      ref="map"
       :zoom.sync="zoom"
       :center.sync="center">
       <l-tile-layer
@@ -9,6 +10,7 @@
         :attribution="attribution"/>
       <l-geo-json
         v-if="show"
+        ref="layerGeoJson"
         :geojson="geojson"
         :options="options"
         :optionsStyle="styleFunction"
@@ -32,10 +34,10 @@
     }
   })
   export default class Maps extends Vue {
-    @Prop() prop: string|null
+    @Prop () prop: string|null
 
     loading: boolean = false
-    show: boolean = true
+    show: boolean = false
     zoom: number = 7
     center: Array<number> = [47.64318610543658, 13.53515625]
     geojson: any = null
@@ -43,6 +45,9 @@
     url: string = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
     attribution: string = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     randomColors: object = {}
+    layerGeoJson: any = null
+    map: any = null
+
     get options () {
       return {
         onEachFeature: this.onEachFeatureFunction
@@ -83,15 +88,28 @@
         });
       }
     }
-    created() {
+    test () {
+      if (this.geojson && this.layerGeoJson && this.map) {
+        this.$nextTick(() => {
+          this.map.mapObject.fitBounds(this.layerGeoJson.mapObject.getBounds())
+        })
+      }
+    }
+    created () {
       this.loading = true
       axios.get('/static/test_geo.json').then(response => {
         this.geojson = response.data
         this.loading = false
+        this.test()
       });
     }
-    mounted() {
+    mounted () {
       console.log(L.latLng(47.413220, -1.219482))
+      this.$nextTick(() => {
+        this.layerGeoJson = this.$refs.layerGeoJson
+        this.map = this.$refs.map
+        this.test()
+      })
     }
   }
 </script>
