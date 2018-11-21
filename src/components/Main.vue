@@ -1,5 +1,5 @@
 <template>
-  <v-layout column>
+  <v-layout column fill-height>
     <v-flex class="text-xs-center">
       <v-text-field
         autofocus
