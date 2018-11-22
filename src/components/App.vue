@@ -4,9 +4,15 @@
       <v-container fill-height class="pa-0" app>
         <v-layout column>
           <v-flex>
-            <v-flex xs12 class="text-xs-center">
-              <img class="logo" src="/static/img/logo.svg" />
-            </v-flex>
+            <!-- <v-flex class="text-xs-right" xs12>
+              <v-btn class="text-no-transform" color="grey" small round flat>test</v-btn>
+              <v-btn class="text-no-transform" color="grey" small round flat>test</v-btn>
+            </v-flex> -->
+            <v-layout>
+              <v-flex xs12 class="text-xs-center">
+                <img class="logo mt-4" src="/static/img/logo.svg" />
+              </v-flex>
+            </v-layout>
           </v-flex>
           <v-flex class="pl-3 pr-3">
             <v-flex>
@@ -28,13 +34,12 @@
             </v-flex>
           </v-flex>
           <v-flex xs12 fill-height class="pa-3">
-            <router-view />
+            <keep-alive>
+              <router-view />
+            </keep-alive>
           </v-flex>
         </v-layout>
       </v-container>
-      <!-- <v-container class="main-container" fluid fill-height app>
-        
-      </v-container> -->
     </v-content>
   </v-app>
 </template>
@@ -55,10 +60,6 @@ export default class App extends Vue {
   @import '/static/css/materialdesignicons.min.css';
   @import '../styles/fonts.scss';
   @import '../styles/global.scss';
-  .main-container{
-    max-width: 1200px !important;
-    margin: 0 auto !important;
-  }
   .active-tab{
     color: white;
     background: rgba(255,255,255,.2)
@@ -68,10 +69,6 @@ export default class App extends Vue {
 .tabs-top{
   overflow: hidden;
   border-radius: 5px;
-}
-
-.logo{
-  margin-top: 2em;
 }
 </style>
 

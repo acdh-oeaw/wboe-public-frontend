@@ -11,8 +11,28 @@
         :items="articles"
         prepend-inner-icon="search"
       />
-      <div class="article-xml mb-3" v-html="metaXML" />
-      <!-- <div v-html="articleXML" class="" /> -->
+      <v-layout>
+        <v-flex class="article-xml mb-3" v-html="metaXML" xs8 />
+        <v-flex class="text-xs-right">
+          <v-dialog v-model="showEditor" max-width="1000" content-class="fill-height" color="#2b2735" scrollable>
+            <v-btn small round flat slot="activator">TEI</v-btn>
+            <v-card color="#342f40" dark flat class="fill-height">
+              <v-card-title class="pt-1 pb-1">
+                <v-flex>
+                  {{ file_name }}.xml
+                </v-flex>
+                <v-flex class="text-xs-right">
+                  <v-btn small round flat>download</v-btn>
+                  <v-btn small round flat @click="saveEditorXML">view</v-btn>
+                </v-flex>
+              </v-card-title>
+              <v-card-text class="pa-0 fill-height">
+                <xml-editor :show="showEditor" class="fill-height" v-model="articleXML" />
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+        </v-flex>
+      </v-layout>
       <v-expansion-panel expand>
         <v-expansion-panel-content :disabled="isEmpty(verbreitungXML)">
           <div slot="header">Verbreitung</div>
@@ -44,6 +64,12 @@
             <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="wortbildungXML" />
           </v-card>
         </v-expansion-panel-content>
+        <v-expansion-panel-content :disabled="isEmpty(redewendungenXML)">
+          <div slot="header">Redewendungen</div>
+          <v-card class="article-xml redewendungen">
+            <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="redewendungenXML" />
+          </v-card>
+        </v-expansion-panel-content>
       </v-expansion-panel>
       <!-- <div class="article-xml" v-html="articleXML"> -->
     </v-flex>
@@ -53,20 +79,28 @@
 
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { getArticleByFileName, getArticles } from '../api'
+import XmlEditor from '@components/XmlEditor.vue'
 
-@Component
+@Component({
+  components: {
+    XmlEditor
+  }
+})
 export default class Article extends Vue {
 
   @Prop() file_name: string
-  articles: Array<{text: string, value: string}> = []
-  articleXML: string|null = ''
 
+  showEditor = false
+  articles: Array<{text: string, value: string}> = []
+
+  articleXML: string|null = ''
   title: string|null = null
   bedeutungXML: string|null = null
   verbreitungXML: string|null = null
   belegauswahlXML: string|null = null
   etymologieXML: string|null = null
   wortbildungXML: string|null = null
+  redewendungenXML: string|null = null
   metaXML: string|null = null
 
   loadArticle(e: string) {
@@ -83,9 +117,15 @@ export default class Article extends Vue {
     return d.innerText.trim() === ''
   }
 
-  fragementFromSelector(selector: string, body: string) {
+  fragementFromSelector(selector: string, body: string, contains?: string) {
     const elements = Array.from(this.elementsFromDom(selector, body))
-    return elements.reduce((m, e) => m = m + e.outerHTML, '')
+    if (contains !== undefined) {
+      return elements
+        .filter(e => e.querySelectorAll(contains).length > 0)
+        .reduce((m, e) => m = m + e.outerHTML, '')
+    } else {
+      return elements.reduce((m, e) => m = m + e.outerHTML, '')
+    }
   }
 
   elementsFromDom(selector: string, body: string) {
@@ -99,6 +139,11 @@ export default class Article extends Vue {
     this.initArticle(this.file_name)
   }
 
+  saveEditorXML() {
+    this.showEditor = false
+    this.initXML(this.articleXML!)
+  }
+
   async mounted() {
     this.articles = (await getArticles()).map(t => {
       return {
@@ -109,29 +154,43 @@ export default class Article extends Vue {
     this.initArticle(this.file_name)
   }
 
+  initXML(xml: string) {
+    // tslint:disable-next-line:max-line-length
+    this.metaXML = this.fragementFromSelector('text > entry > form[type=lemma], text > entry > gramGrp, teiHeader title', xml)
+    this.bedeutungXML = this.fragementFromSelector('text > entry > sense', xml)
+    this.verbreitungXML = this.fragementFromSelector('text > entry > usg[type=geo]', xml)
+    // tslint:disable-next-line:max-line-length
+    this.belegauswahlXML = this.fragementFromSelector('text > entry > form[type=variant]:not([subtype])', xml)
+    this.etymologieXML = this.fragementFromSelector('text > entry > etym', xml)
+    this.wortbildungXML = this.fragementFromSelector('text > entry > re', xml, '[subtype=compound]')
+    this.redewendungenXML = this.fragementFromSelector('text > entry > re', xml, '[subtype=MWE]')
+    this.title = this.elementsFromDom('title', this.metaXML)[0].innerHTML
+  }
+
   async initArticle(fileName: string) {
     this.articleXML = await getArticleByFileName(fileName + '.xml')
-    // tslint:disable-next-line:max-line-length
-    this.metaXML = this.fragementFromSelector('text > entry > form[type=lemma], text > entry > gramGrp, teiHeader title', this.articleXML)
-    this.bedeutungXML = this.fragementFromSelector('text > entry > sense', this.articleXML)
-    this.verbreitungXML = this.fragementFromSelector('text > entry > usg[type=geo]', this.articleXML)
-    // tslint:disable-next-line:max-line-length
-    this.belegauswahlXML = this.fragementFromSelector('text > entry > form[type=variant]:not([subtype])', this.articleXML)
-    this.etymologieXML = this.fragementFromSelector('text > entry > etym', this.articleXML)
-    this.wortbildungXML = this.fragementFromSelector('text > entry > re', this.articleXML)
-    this.title = this.elementsFromDom('title', this.metaXML)[0].innerHTML
+    this.initXML(this.articleXML)
   }
 }
 </script>
+
 <style lang="scss">
 .article-xml {
-  font-size: 120%;
+  font-size: 115%;
   form {
     display: inline-block;
   }
   form[type="variant"] {
     display: inline-block;
     margin-right: .25em;
+  }
+  gram[type="gender"] {
+    &::before{
+      content: '(';
+    }
+    &::after{
+      content: ')';
+    }
   }
   title{
     margin-right: .5em;
@@ -181,7 +240,7 @@ export default class Article extends Vue {
       margin-left: -.25em;
     }
   }
-  &.wortbildung{
+  &.wortbildung, &.redewendungen{
     re{
       display: block;
       margin-bottom: .25em;
@@ -191,8 +250,7 @@ export default class Article extends Vue {
       margin-right: .5em;
     }
     sense{
-      margin-bottom: 0;
-      display: inline-block;
+      display: inline;
       sense {
         margin-left: 0;
         sense {
@@ -201,26 +259,28 @@ export default class Article extends Vue {
       }
     }
   }
-  &.etymologie{
-    cit{
-      form{
-        font-style: italic;
-      }
+  cit{
+    form{
+      font-style: italic;
     }
-    ref[type="bibl"]{
-      &::before{
-        margin-right: -.25em;
-        content: "("
-      }
-      &::after{
-        margin-left: -.25em;
-        content: ")"
-      }
-      citedrange::before{
-        content: ":";
-        margin-left: -.25em;
-        margin-right: .25em;
-      }
+  }
+  ref[type="bibl"]{
+    font-variant: small-caps;
+    * {
+      font-variant: normal;
+    }
+    &::before{
+      margin-right: -.25em;
+      content: "("
+    }
+    &::after{
+      margin-left: -.25em;
+      content: ")"
+    }
+    citedrange::before{
+      content: ":";
+      margin-left: -.25em;
+      margin-right: .25em;
     }
   }
   sense {
@@ -232,16 +292,13 @@ export default class Article extends Vue {
       content: counter(roman-counter, upper-roman) ". "
     }
     sense {
-      margin-left: 1.5em;
-      margin-bottom: 0;
       counter-increment: decimal-counter;
       &:not(:only-of-type)::before{
         font-weight: 700;
         content: counter(decimal-counter, decimal) ". "
       }
-      display: inline-block;
+      display: inline;
       sense {
-        margin-left: 0;
         display: inline;
         counter-increment: alpha-counter;
         &:not(:only-of-type)::before{
