@@ -1,6 +1,12 @@
+declare var process: {
+  env: {
+    [key: string]: string
+  }
+}
+
 const esEndpoint = 'https://https://walk-want-grew.acdh.oeaw.ac.at/_search'
 const apiEndpoint = 'https://dboeannotation.acdh-dev.oeaw.ac.at/api'
-const articleEndpoint = 'http://localhost:8081'
+const articleEndpoint = process.env.API_HOST || 'http://localhost:8081'
 
 function parseXML(str: string) {
   return (new (window as any).DOMParser()).parseFromString(str, 'application/xml') as XMLDocument

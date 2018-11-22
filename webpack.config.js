@@ -143,9 +143,9 @@ if (process.env.NODE_ENV === 'production') {
         return JSON.stringify(v)
       }).value()
     }),
-    new UglifyJsPlugin({
-      sourceMap: false
-    }),
+    // new UglifyJsPlugin({
+    //   sourceMap: false
+    // }),
     new webpack.LoaderOptionsPlugin({
       minimize: true
     })

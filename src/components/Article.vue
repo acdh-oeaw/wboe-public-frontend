@@ -11,11 +11,11 @@
         :items="articles"
         prepend-inner-icon="search"
       />
-      <v-layout>
-        <v-flex class="article-xml mb-3" v-html="metaXML" xs8 />
+      <v-layout align-baseline>
+        <v-flex class="article-xml mb-3" v-html="metaXML" xs12 />
         <v-flex class="text-xs-right">
           <v-dialog v-model="showEditor" max-width="1000" content-class="fill-height" color="#2b2735" scrollable>
-            <v-btn small round flat slot="activator">TEI</v-btn>
+            <v-btn small round flat slot="activator">XML/TEI</v-btn>
             <v-card color="#342f40" dark flat class="fill-height">
               <v-card-title class="pt-1 pb-1">
                 <v-flex>
@@ -156,7 +156,7 @@ export default class Article extends Vue {
 
   initXML(xml: string) {
     // tslint:disable-next-line:max-line-length
-    this.metaXML = this.fragementFromSelector('text > entry > form[type=lemma], text > entry > gramGrp, teiHeader title', xml)
+    this.metaXML = this.fragementFromSelector('text > entry > form[type=lemma], text > entry > form[subtype=diminutive], text > entry > gramGrp', xml)
     this.bedeutungXML = this.fragementFromSelector('text > entry > sense', xml)
     this.verbreitungXML = this.fragementFromSelector('text > entry > usg[type=geo]', xml)
     // tslint:disable-next-line:max-line-length
@@ -183,6 +183,9 @@ export default class Article extends Vue {
   form[type="variant"] {
     display: inline-block;
     margin-right: .25em;
+    &[subtype="diminutive"] orth{
+      font-style: italic
+    }
   }
   gram[type="gender"] {
     &::before{
@@ -192,15 +195,18 @@ export default class Article extends Vue {
       content: ')';
     }
   }
-  title{
+  form[type="lemma"] orth{
     margin-right: .5em;
     display: inline-block;
     font-size: 2.5em;
   }
   cit quote {
+    &::before{
+      content: "— "
+    }
     font-style: italic;
   }
-  sense def{
+  def{
     letter-spacing: .075em;
     &::before{
       content: "'"
