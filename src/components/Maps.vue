@@ -14,11 +14,19 @@
       solo
       clearable
       multiple />
+    <v-layout fill-height class="map-overlay pa-4">
+      <v-flex xs3>
+        <v-card height="300">
+          <v-btn @click="zoom = zoom + 1" icon><v-icon>add</v-icon></v-btn>
+          <v-btn @click="zoom = zoom - 1" icon><v-icon>remove</v-icon></v-btn>
+        </v-card>
+      </v-flex>
+    </v-layout>
     <l-map
       class="mt-2"
       style="z-index: 0; position: absolute; left: 0; right: 0;"
       ref="map"
-      :options="{ scrollWheelZoom: false }"
+      :options="{ scrollWheelZoom: false, zoomControl: false }"
       :zoom.sync="zoom"
       :center.sync="center">
       <l-tile-layer
@@ -182,5 +190,16 @@
   }
 </script>
 <style lang="scss" scoped>
+.map-overlay{
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  * {
+    pointer-events: all
+  }
+}
   @import "../../node_modules/leaflet/dist/leaflet.css";
 </style>
