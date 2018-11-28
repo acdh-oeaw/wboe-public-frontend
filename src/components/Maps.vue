@@ -16,11 +16,27 @@
       multiple />
     <v-layout fill-height class="map-overlay pa-4">
       <v-flex xs3>
-        <v-card height="300">
+        <v-card>
           <v-btn @click="zoom = zoom + 1" icon><v-icon>add</v-icon></v-btn>
           <v-btn @click="zoom = zoom - 1" icon><v-icon>remove</v-icon></v-btn>
         </v-card>
       </v-flex>
+      <v-menu min-width="200" :nudge-bottom="5" :nudge-left="5" left lazy offset-x offset-y>
+        <v-btn slot="activator" color="primary" fab fixed bottom right >
+          <v-icon>save_alt</v-icon>
+        </v-btn>
+        <v-list class="context-menu-list" dense>
+          <v-list-tile>
+            test
+          </v-list-tile>
+          <v-list-tile>
+            test
+          </v-list-tile>
+          <v-list-tile>
+            test
+          </v-list-tile>
+        </v-list>
+      </v-menu>
     </v-layout>
     <l-map
       class="mt-2"
