@@ -1,14 +1,14 @@
 <template>
   <v-list>
-    <v-list-group v-for="(articles, initial) in articlesByInitial" :key="initial">
-      <v-subheader>{{ initial }}</v-subheader>
-      <v-divider />
+    <template v-for="(articles, initial) in articlesByInitial">
+      <v-subheader :key="initial">{{ initial }}</v-subheader>
+      <v-divider :key="initial"/>
       <v-list-tile :to="`/articles/${ article.file_name.replace('.xml', '') }`" v-for="article in articles" :key="article.title">
         <v-list-tile-title>
           {{ article.title }}
         </v-list-tile-title>
       </v-list-tile>
-    </v-list-group>
+    </template>
   </v-list>
 </template>
 <script lang="ts">
