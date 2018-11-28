@@ -1,8 +1,8 @@
 <template>
   <v-list>
     <template v-for="(articles, initial) in articlesByInitial">
-      <v-subheader :key="initial">{{ initial }}</v-subheader>
-      <v-divider :key="initial"/>
+      <v-subheader :key="'subheader' + initial">{{ initial }}</v-subheader>
+      <v-divider :key="'divider' + initial"/>
       <v-list-tile :to="`/articles/${ article.file_name.replace('.xml', '') }`" v-for="article in articles" :key="article.title">
         <v-list-tile-title>
           {{ article.title }}
