@@ -13,6 +13,9 @@
       />
       <v-layout align-baseline>
         <v-flex class="article-xml mb-3" v-html="metaXML" xs12 />
+        <v-flex>
+          <v-btn small round flat @click="toggleAll">{{ isEveryArticleExpanded ? 'Einklappen' : 'Ausklappen'}}</v-btn>
+        </v-flex>
         <v-flex class="text-xs-right">
           <v-dialog v-model="showEditor" max-width="1000" content-class="fill-height" color="#2b2735" scrollable>
             <v-btn small round flat slot="activator">XML/TEI</v-btn>
@@ -33,38 +36,38 @@
           </v-dialog>
         </v-flex>
       </v-layout>
-      <v-expansion-panel expand>
-        <v-expansion-panel-content :disabled="isEmpty(verbreitungXML)">
+      <v-expansion-panel @click.native="handleArticleClick" v-model="expanded" expand>
+        <v-expansion-panel-content :disabled="isEmptyXML(verbreitungXML)">
           <div slot="header">Verbreitung</div>
           <v-card class="article-xml">
             <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="verbreitungXML" />
           </v-card>
         </v-expansion-panel-content>
-        <v-expansion-panel-content :disabled="isEmpty(belegauswahlXML)">
+        <v-expansion-panel-content :disabled="isEmptyXML(belegauswahlXML)">
           <div slot="header">Belegauswahl</div>
           <v-card class="article-xml belegauswahl">
             <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="belegauswahlXML" />
           </v-card>
         </v-expansion-panel-content>
-        <v-expansion-panel-content :disabled="isEmpty(etymologieXML)">
+        <v-expansion-panel-content :disabled="isEmptyXML(etymologieXML)">
           <div slot="header">Etymologie</div>
           <v-card class="article-xml etymologie">
             <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="etymologieXML" />
           </v-card>
         </v-expansion-panel-content>
-        <v-expansion-panel-content :disabled="isEmpty(bedeutungXML)">
+        <v-expansion-panel-content :disabled="isEmptyXML(bedeutungXML)">
           <div slot="header">Bedeutung</div>
           <v-card class="article-xml bedeutung">
             <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="bedeutungXML" />
           </v-card>
         </v-expansion-panel-content>
-        <v-expansion-panel-content :disabled="isEmpty(wortbildungXML)">
+        <v-expansion-panel-content :disabled="isEmptyXML(wortbildungXML)">
           <div slot="header">Wortbildung</div>
           <v-card class="article-xml wortbildung">
             <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="wortbildungXML" />
           </v-card>
         </v-expansion-panel-content>
-        <v-expansion-panel-content :disabled="isEmpty(redewendungenXML)">
+        <v-expansion-panel-content :disabled="isEmptyXML(redewendungenXML)">
           <div slot="header">Redewendungen</div>
           <v-card class="article-xml redewendungen">
             <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="redewendungenXML" />
@@ -93,6 +96,15 @@ export default class Article extends Vue {
   showEditor = false
   articles: Array<{text: string, value: string}> = []
 
+  expanded = [
+    false,
+    false,
+    false,
+    true,
+    false,
+    false
+  ]
+
   articleXML: string|null = ''
   title: string|null = null
   bedeutungXML: string|null = null
@@ -103,6 +115,34 @@ export default class Article extends Vue {
   redewendungenXML: string|null = null
   metaXML: string|null = null
 
+  isPlaceNameElement(el: HTMLElement|any) {
+    return el.nodeName === 'PLACENAME' && el.getAttribute('xml:id') !== null
+  }
+
+  handleArticleClick(e: MouseEvent) {
+    if (this.isPlaceNameElement(e.target)) {
+      this.openMapsWithPlaces([
+        (e.target as HTMLElement).getAttribute('xml:id')!
+      ])
+    }
+  }
+
+  openMapsWithPlaces(placeIds: string[]) {
+    this.$router.push({ path: '/maps',  query: { loc: placeIds.join(',') } })
+  }
+
+  get isEveryArticleExpanded() {
+    return this.expanded.find(x => x) !== undefined
+  }
+
+  toggleAll() {
+    if (this.isEveryArticleExpanded) {
+      this.expanded = this.expanded.map(_ => false)
+    } else {
+      this.expanded = this.expanded.map(_ => true)
+    }
+  }
+
   loadArticle(e: string) {
     if (e.trim() !== '') {
       this.$router.push(`/articles/${e}`)
@@ -111,7 +151,7 @@ export default class Article extends Vue {
     }
   }
 
-  isEmpty(xml: string) {
+  isEmptyXML(xml: string) {
     const d = document.createElement('div')
     d.innerHTML = xml
     return d.innerText.trim() === ''
