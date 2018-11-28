@@ -5,6 +5,7 @@
       :items="locationsSearchItems"
       label="Suche…"
       autofocus
+      dense
       flat
       prepend-inner-icon="search"
       solo
