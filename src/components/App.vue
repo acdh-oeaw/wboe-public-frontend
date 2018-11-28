@@ -26,8 +26,8 @@
                 color="#003263"
                 slider-color="white">
                 <v-tab to="/">Main</v-tab>
-                <v-tab to="/maps">Karten</v-tab>
                 <v-tab to="/articles">Artikel</v-tab>
+                <v-tab to="/maps">Karten</v-tab>
                 <v-tab to="/db">Datenbank</v-tab>
                 <v-tab to="/resources">Materialien</v-tab>
               </v-tabs>
