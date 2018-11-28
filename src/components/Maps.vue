@@ -3,8 +3,11 @@
     <v-autocomplete
       :loading="isLoading"
       :items="locationsSearchItems"
+      :value="selectedLocations"
+      @input="selectLocations"
       label="Suche…"
       autofocus
+      hide-details
       dense
       flat
       prepend-inner-icon="search"
@@ -12,17 +15,19 @@
       clearable
       multiple />
     <l-map
-      style="z-index: 0;"
+      class="mt-2"
+      style="z-index: 0; position: absolute; left: 0; right: 0;"
       ref="map"
+      :options="{ scrollWheelZoom: false }"
       :zoom.sync="zoom"
       :center.sync="center">
       <l-tile-layer
         :url="url"
         :attribution="attribution"/>
       <l-geo-json
-        v-if="show"
+        v-if="selectedLocations.length > 0"
         ref="layerGeoJson"
-        :geojson="geojson"
+        :geojson="displayLocations"
         :options="options"
         :optionsStyle="styleFunction"
         />
@@ -46,9 +51,9 @@
     }
   })
   export default class Maps extends Vue {
-    @Prop () prop: string|null
 
-    show: boolean = false
+    @Prop() loc: string|null
+
     zoom: number = 7
     center: number[] = [47.64318610543658, 13.53515625]
     geoStore = geoStore
@@ -56,14 +61,43 @@
     url: string = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
     attribution: string = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     randomColors: object = {}
+    options = {
+      onEachFeature: this.onEachFeatureFunction
+    }
+
     layerGeoJson: any = null
     map: any = null
 
-    get options () {
-      return {
-        onEachFeature: this.onEachFeatureFunction
+    get selectedLocations() {
+      if (this.loc) {
+        return this.loc.split(',')
+      } else {
+        return []
       }
     }
+
+    selectLocations(locs: string[]) {
+      if (locs.length === 0) {
+        this.$router.replace({ query: {} })
+      } else {
+        this.$router.replace({ query: { loc: locs.join(',') } })
+      }
+    }
+
+    get displayLocations() {
+      if (this.loc && this.geojson) {
+        const locations = this.loc.split(',')
+        return {
+          ...this.geojson,
+          features: this.geojson.features.filter((f: any) => {
+            return locations.indexOf(f.properties.sigle) > -1
+          })
+        }
+      } else {
+        return this.geojson
+      }
+    }
+
     get locationsSearchItems() {
       if (this.geojson !== null) {
         return this.geojson.features.map(f => {

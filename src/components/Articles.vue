@@ -1,28 +1,39 @@
 <template>
-  <div class="xml-article-display" v-html="xml"></div>
+  <v-list>
+    <v-list-group v-for="(articles, initial) in articlesByInitial" :key="initial">
+      <v-subheader>{{ initial }}</v-subheader>
+      <v-divider />
+      <v-list-tile :to="`/articles/${ article.file_name.replace('.xml', '') }`" v-for="article in articles" :key="article.title">
+        <v-list-tile-title>
+          {{ article.title }}
+        </v-list-tile-title>
+      </v-list-tile>
+    </v-list-group>
+  </v-list>
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { getArticles } from '../api'
+import * as _ from 'lodash'
 
 @Component
 // tslint:disable:max-line-length
 export default class Articles extends Vue {
-  xml =  `<?xml version="1.0" encoding="UTF-8"?>
-          <?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml"
-            schematypens="http://purl.oclc.org/dsdl/schematron"?>
-          <?xml-model href="../803_RNG-schematron/WBOE-ODD.rnc" type="application/relax-ng-compact-syntax"?>
-          <TEI
-            xmlns="http://www.tei-c.org/ns/1.0">
-            <teiHeader>
-              YOYOYOYOYO
-            </teiHeader>
-          </TEI>`
-}
-</script>
-<style lang="scss">
-.xml-article-display {
-  teiheader{
-    color: red
+  articles: Array<{ title: string, file_name: string }> = []
+
+  getCleanInitial(lemmaName: string) {
+    return lemmaName.replace(/\(.*\)/g, '')[0].toUpperCase()
+  }
+
+  get articlesByInitial() {
+    return _(this.articles)
+      .orderBy((a) => this.getCleanInitial(a.title))
+      .groupBy((a) => this.getCleanInitial(a.title))
+      .value()
+  }
+
+  async mounted() {
+    this.articles = await getArticles()
   }
 }
-</style>
+</script>
