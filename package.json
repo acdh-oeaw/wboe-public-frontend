@@ -53,6 +53,7 @@
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
+    "@types/geojson": "^7946.0.4",
     "css-loader": "^0.28.7",
     "node-sass": "^4.7.2",
     "nodemon": "^1.18.6",
