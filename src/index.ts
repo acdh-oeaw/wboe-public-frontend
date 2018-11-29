@@ -12,7 +12,11 @@ Vue.config.productionTip = true
 
 Vue.use(Vuex)
 Vue.use(VueRouter)
-Vue.use(Vuetify)
+Vue.use(Vuetify, {
+  theme: {
+    ci: '#003263'
+  }
+})
 Vue.use(VueLazyload, { lazyComponent : true })
 import VueWordCloud from 'vuewordcloud'
 Vue.component(VueWordCloud.name, VueWordCloud)

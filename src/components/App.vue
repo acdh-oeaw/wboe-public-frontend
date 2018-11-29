@@ -23,7 +23,7 @@
                 class="tabs-top"
                 fixed-tabs
                 centered
-                color="#003263"
+                color="ci"
                 slider-color="white">
                 <v-tab to="/">Main</v-tab>
                 <v-tab to="/articles">Artikel</v-tab>
