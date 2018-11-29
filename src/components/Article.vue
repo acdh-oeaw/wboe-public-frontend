@@ -255,26 +255,51 @@ export default class Article extends Vue {
       content: "'"
     }
   }
+  cit usg[type=geo] {
+    &:last-child::before {
+      opacity: .6;
+      margin-right: -.25em;
+      content: '('
+    }
+    &:last-child::after {
+      opacity: .6;
+      margin-left: -.25em;
+      content: ', GrßRg.)'
+    }
+  }
+  usg[type=geo] {
+    &:last-of-type placename{
+      &:last-child{
+        &::after{
+          display: none;
+        }
+      }
+    } 
+  }
   placename[xml\:id] {
     cursor: pointer;
-    transition: .25s;
-    background: #f4f4f4;
     display: inline-block;
-    padding: 0 9px;
-    border-radius: 14px;
-    font-size: .85em;
+    opacity: .6;
     &[type=bundesland]{
-      background: aliceblue;
+      &::after{
+        content: ';'
+      }
+      // background: aliceblue;
     }
     &[type=grossregion]{
-      background: darken(aliceblue, $amount: 3)
+      &::after{
+        content: ','
+      }
+      // background: darken(aliceblue, $amount: 3)
     }
     &[type=gemeinde]{
-      background: darken(aliceblue, $amount: 6)
+      &::after{
+        content: ','
+      }
+      // background: darken(aliceblue, $amount: 6)
     }
     &:hover{
-      transform: translateY(-2px);
-      background: darken(aliceblue, $amount: 2)
+      text-decoration: underline
     }
   }
   &.belegauswahl{
@@ -315,13 +340,17 @@ export default class Article extends Vue {
     * {
       font-variant: normal;
     }
-    &::before{
-      margin-right: -.25em;
+    &::before {
       content: "("
     }
-    &::after{
-      margin-left: -.25em;
+    &::after {
       content: ")"
+    }
+    &>*:last-child {
+      margin-right: -.25em
+    }
+    &>*:first-child {
+      margin-left: -.25em
     }
     citedrange::before{
       content: ":";
