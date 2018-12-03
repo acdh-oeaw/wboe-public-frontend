@@ -80,9 +80,11 @@
 </template>
 <script lang="ts">
 
+// tslint:disable:max-line-length
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { getArticleByFileName, getArticles } from '../api'
 import XmlEditor from '@components/XmlEditor.vue'
+import { geoStore } from '../store/geo'
 
 @Component({
   components: {
@@ -95,6 +97,7 @@ export default class Article extends Vue {
 
   showEditor = false
   articles: Array<{text: string, value: string}> = []
+  geoStore = geoStore
 
   expanded = [
     false,
@@ -114,6 +117,18 @@ export default class Article extends Vue {
   wortbildungXML: string|null = null
   redewendungenXML: string|null = null
   metaXML: string|null = null
+
+  getGrossregionFromGemeinde(sigle: string): string {
+    if (geoStore.grossregionen !== null) {
+      const s = sigle.split(/([a-z])/)[0]
+      const g = geoStore.grossregionen.features.find((f) => {
+        return f.properties!.Sigle === s
+      })
+      return g ? g.properties!.Grossreg : ''
+    } else {
+      return ''
+    }
+  }
 
   isPlaceNameElement(el: HTMLElement|any) {
     return el.nodeName === 'PLACENAME' && el.getAttribute('xml:id') !== null
@@ -194,12 +209,23 @@ export default class Article extends Vue {
     this.initArticle(this.file_name)
   }
 
+  appendGrossregionViaId(selector: string, xml: string) {
+    const e = document.createElement('div')
+    e.innerHTML = xml
+    Array.from(e.querySelectorAll(selector)).forEach((v, i) => {
+      const grossregion = document.createElement('grossregion')
+      const sigle = v.getAttribute('xml:id') || ''
+      grossregion.innerHTML = this.getGrossregionFromGemeinde(sigle)
+      v.appendChild(grossregion)
+    })
+    return e.innerHTML
+  }
+
   initXML(xml: string) {
-    // tslint:disable-next-line:max-line-length
+    xml = this.appendGrossregionViaId('form[type=variant] placename[type=gemeinde], cit placename[type=gemeinde]', xml)
     this.metaXML = this.fragementFromSelector('text > entry > form[type=lemma], text > entry > form[subtype=diminutive], text > entry > gramGrp', xml)
     this.bedeutungXML = this.fragementFromSelector('text > entry > sense', xml)
     this.verbreitungXML = this.fragementFromSelector('text > entry > usg[type=geo]', xml)
-    // tslint:disable-next-line:max-line-length
     this.belegauswahlXML = this.fragementFromSelector('text > entry > form[type=variant]:not([subtype])', xml)
     this.etymologieXML = this.fragementFromSelector('text > entry > etym', xml)
     this.wortbildungXML = this.fragementFromSelector('text > entry > re', xml, '[subtype=compound]')
@@ -266,7 +292,10 @@ export default class Article extends Vue {
       &:last-of-type::after {
         opacity: .6;
         margin-left: -.25em;
-        content: ', GrßRg.)'
+        content: ')'
+      }
+      grossregion::before{
+        content: ', '
       }
     }
   }

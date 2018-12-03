@@ -108,6 +108,7 @@ import axios from 'axios';
 export default class Maps extends Vue {
 
   @Prop() loc: string|null
+  @Prop() collection_ids: string|null
 
   autoFit = false
   zoom: number = defaultZoom
@@ -247,7 +248,7 @@ export default class Maps extends Vue {
         });
       });
       layer.on('mouseout', function(this: any) {
-        const aSigleS: string = feature.properties.sigle.split('.')[0]
+        const aSigleS = feature.properties.sigle.split('.')[0]
         this.setStyle({
           fillColor: aThis.randomColors[aSigleS],
           fillOpacity: 0.5
