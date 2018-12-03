@@ -1,14 +1,28 @@
 <template>
-  <v-list>
-    <template v-for="(articles, i) in articlesByInitial">
-      <v-subheader class="sticky" :key="'subheader' + i">{{ articles.initials }}</v-subheader>
-      <v-list-tile :to="`/articles/${ article.file_name.replace('.xml', '') }`" v-for="article in articles.articles" :key="article.title">
-        <v-list-tile-title>
-          {{ article.title }}
-        </v-list-tile-title>
-      </v-list-tile>
-    </template>
-  </v-list>
+  <v-layout column>
+    <v-flex class="text-xs-center">
+      <v-text-field
+        autofocus
+        flat
+        label="Suche…"
+        prepend-inner-icon="search"
+        solo
+        clearable
+      />
+    </v-flex>
+    <v-flex xs12>
+      <v-list>
+        <template v-for="(articles, i) in articlesByInitial">
+          <v-subheader class="sticky" :key="'subheader' + i">{{ articles.initials }}</v-subheader>
+          <v-list-tile :to="`/articles/${ article.file_name.replace('.xml', '') }`" v-for="article in articles.articles" :key="article.title">
+            <v-list-tile-title>
+              {{ article.title }}
+            </v-list-tile-title>
+          </v-list-tile>
+        </template>
+      </v-list>
+    </v-flex>
+  </v-layout>
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'

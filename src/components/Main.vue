@@ -9,7 +9,7 @@
         prepend-inner-icon="search"
         solo
         clearable
-      ></v-text-field>
+      />
     </v-flex>
     <v-flex xs12>
       <!-- <v-progress-linear

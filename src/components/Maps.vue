@@ -90,6 +90,7 @@ import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { LMap, LTileLayer, LMarker, LGeoJson } from 'vue2-leaflet'
 import { geoStore } from '../store/geo'
 import * as L from 'leaflet'
+import * as _ from 'lodash'
 
 const defaultCenter = [47.64318610543658, 13.53515625]
 const defaultZoom = 7
@@ -161,25 +162,52 @@ export default class Maps extends Vue {
     }
   }
 
+  get allFeatures() {
+    if (!this.isLoading) {
+      return _([
+        ...this.geoStore.bundeslaender!.features,
+        ...this.geoStore.grossregionen!.features,
+        ...this.geoStore.gemeinden!.features
+      ]).map((f) => {
+        return {
+          ...f,
+          properties: {
+            ...f.properties,
+            name:
+              (f.properties as any).NAME_D ||
+              (f.properties!.name) ||
+              (f.properties as any).Bundesland ||
+              (f.properties as any).Grossreg,
+            sigle:
+              (f.properties as any).sigle ||
+              (f.properties as any).Sigle
+          }
+        }
+      }).value()
+    } else {
+      return []
+    }
+  }
+
   get displayLocations() {
-    if (this.loc && this.geojson) {
+    if (this.loc && !this.isLoading) {
       const locations = this.loc.split(',')
       return {
-        ...this.geojson,
-        features: this.geojson.features.filter((f: any) => {
+        ...this.geoStore!.gemeinden,
+        features: this.allFeatures.filter((f: any) => {
           return locations.indexOf(f.properties.sigle) > -1
         })
       }
     } else {
-      return this.geojson
+      return this.allFeatures
     }
   }
 
   get locationsSearchItems() {
-    if (this.geojson !== null) {
-      return this.geojson.features.map(f => {
+    if (!this.isLoading) {
+      return this.allFeatures.map(f => {
         return {
-          text: (f.properties as any).NAME_D || f.properties!.name,
+          text: f.properties.name,
           value: (f.properties as any).sigle
         }
       })
@@ -187,15 +215,12 @@ export default class Maps extends Vue {
       return []
     }
   }
-  get geojson() {
-    return this.geoStore.gemeinden
-  }
-  get styleFunction () {
+  get styleFunction() {
     let aThis: any = this
     return (feature: any) => {
       let aSigleS: string = feature.properties.sigle.split('.')[0]
       if (!aThis.randomColors[aSigleS]) {
-        aThis.randomColors[aSigleS] = '#'+Math.floor(Math.random()*16777215).toString(16)
+        aThis.randomColors[aSigleS] = '#' + Math.floor(Math.random() * 16777215).toString(16)
       }
       return {
         weight: 1,
@@ -206,18 +231,23 @@ export default class Maps extends Vue {
       }
     }
   }
-  get onEachFeatureFunction () {
-    let aThis: any = this
+  get onEachFeatureFunction() {
+    const aThis: any = this
     return (feature: any, layer: any) => {
-      layer.bindTooltip('<div>name:' + feature.properties.name + '</div><div>sigle:' + feature.properties.sigle + '</div><div>sigle:' + feature.properties.sigle.split('.')[0] + '</div>', { permanent: false, sticky: true })
-      layer.on('mouseover', function (this: any) {
+      layer.bindTooltip(`
+        <div>name: ${feature.properties.name}</div>
+        <div>sigle: ${feature.properties.sigle}</div>
+        <div>sigle: ${feature.properties.sigle.split('.')[0]}</div>`,
+        { permanent: false, sticky: true }
+      )
+      layer.on('mouseover', function(this: any) {
         this.setStyle({
           fillColor: '#0000ff',
           fillOpacity: 1
         });
       });
-      layer.on('mouseout', function (this: any) {
-        let aSigleS: string = feature.properties.sigle.split('.')[0]
+      layer.on('mouseout', function(this: any) {
+        const aSigleS: string = feature.properties.sigle.split('.')[0]
         this.setStyle({
           fillColor: aThis.randomColors[aSigleS],
           fillOpacity: 0.5
@@ -226,10 +256,14 @@ export default class Maps extends Vue {
     }
   }
   get isLoading() {
-    if (this.geojson === null) {
-      return true
-    } else {
+    if (
+      this.geoStore.gemeinden !== null &&
+      this.geoStore.grossregionen !== null &&
+      this.geoStore.bundeslaender !== null
+    ) {
       return false
+    } else {
+      return true
     }
   }
   mounted() {
