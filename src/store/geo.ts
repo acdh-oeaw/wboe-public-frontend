@@ -1,5 +1,4 @@
-
-// import api from '../api'
+// tslint:disable:max-line-length
 import * as geojson from 'geojson'
 import * as _ from 'lodash'
 
@@ -17,7 +16,9 @@ export const geoStore = {
 }
 
 async function init() {
-  geoStore.gemeinden = await (await fetch('/static/test_geo.json')).json() as geojson.FeatureCollection
+  geoStore.gemeinden = await (await fetch('/static/gemeinden-geojson-optimized.json')).json() as geojson.FeatureCollection
+  geoStore.bundeslaender = await (await fetch('/static/bundeslaender-geojson-optimized.json')).json() as geojson.FeatureCollection
+  geoStore.grossregionen = await (await fetch('/static/grossregionen-geojson-optimized.json')).json() as geojson.FeatureCollection
 }
 
 export const methods = {
