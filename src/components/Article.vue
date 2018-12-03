@@ -255,16 +255,19 @@ export default class Article extends Vue {
       content: "'"
     }
   }
-  cit usg[type=geo] {
-    &:last-child::before {
-      opacity: .6;
-      margin-right: -.25em;
-      content: '('
-    }
-    &:last-child::after {
-      opacity: .6;
-      margin-left: -.25em;
-      content: ', GrßRg.)'
+  cit, form[type=variant] {
+    usg[type=geo] {
+      &:first-of-type::before {
+        opacity: .6;
+        margin-right: -.25em;
+        display: inline;
+        content: '('
+      }
+      &:last-of-type::after {
+        opacity: .6;
+        margin-left: -.25em;
+        content: ', GrßRg.)'
+      }
     }
   }
   usg[type=geo] {
@@ -284,19 +287,16 @@ export default class Article extends Vue {
       &::after{
         content: ';'
       }
-      // background: aliceblue;
     }
     &[type=grossregion]{
       &::after{
         content: ','
       }
-      // background: darken(aliceblue, $amount: 3)
     }
     &[type=gemeinde]{
       &::after{
         content: ','
       }
-      // background: darken(aliceblue, $amount: 6)
     }
     &:hover{
       text-decoration: underline
