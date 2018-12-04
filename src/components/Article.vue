@@ -38,7 +38,21 @@
       </v-layout>
       <v-expansion-panel @click.native="handleArticleClick" v-model="expanded" expand>
         <v-expansion-panel-content :disabled="isEmptyXML(verbreitungXML)">
-          <div slot="header">Verbreitung</div>
+          <v-layout slot="header">
+            <v-flex xs12>
+              <!-- <v-tooltip top>
+                <v-icon small class="mr-1" slot="activator">info_outline</v-icon>
+                <span>Lorem ipsum dolor sit, amet consectetur adipisicing elit. In consectetur sapiente quidem reiciendis, a dolor? Fuga placeat soluta perferendis error fugiat ducimus vero, aut provident sint facere tempore dignissimos. Vel.</span>
+              </v-tooltip> -->
+              Verbreitung
+            </v-flex>
+            <v-flex>
+              <v-tooltip top>
+                <v-icon class="mr-3" slot="activator">info_outline</v-icon>
+                <span>Lorem ipsum dolor sit, amet consectetur adipisicing elit. In consectetur sapiente quidem reiciendis, a dolor? Fuga placeat soluta perferendis error fugiat ducimus vero, aut provident sint facere tempore dignissimos. Vel.</span>
+              </v-tooltip>
+            </v-flex>
+          </v-layout>
           <v-card class="article-xml">
             <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="verbreitungXML" />
           </v-card>
@@ -85,6 +99,7 @@ import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { getArticleByFileName, getArticles } from '../api'
 import XmlEditor from '@components/XmlEditor.vue'
 import { geoStore } from '../store/geo'
+import * as _ from 'lodash'
 
 @Component({
   components: {
@@ -131,13 +146,17 @@ export default class Article extends Vue {
   }
 
   isPlaceNameElement(el: HTMLElement|any) {
-    return el.nodeName === 'PLACENAME' && el.getAttribute('xml:id') !== null
+    return el.nodeName === 'PLACENAME' && el.getAttribute('ref') !== null
+  }
+
+  getPlacenameSigleFromRef(ref: string): string {
+    return _.last(ref.split(/([#p])/))!
   }
 
   handleArticleClick(e: MouseEvent) {
     if (this.isPlaceNameElement(e.target)) {
       this.openMapsWithPlaces([
-        (e.target as HTMLElement).getAttribute('xml:id')!
+        this.getPlacenameSigleFromRef((e.target as HTMLElement).getAttribute('ref')!)
       ])
     }
   }
@@ -209,12 +228,12 @@ export default class Article extends Vue {
     this.initArticle(this.file_name)
   }
 
-  appendGrossregionViaId(selector: string, xml: string) {
+  appendGrossregionViaRef(selector: string, xml: string) {
     const e = document.createElement('div')
     e.innerHTML = xml
     Array.from(e.querySelectorAll(selector)).forEach((v, i) => {
       const grossregion = document.createElement('grossregion')
-      const sigle = v.getAttribute('xml:id') || ''
+      const sigle = this.getPlacenameSigleFromRef(v.getAttribute('ref') || '')
       grossregion.innerHTML = this.getGrossregionFromGemeinde(sigle)
       v.appendChild(grossregion)
     })
@@ -222,7 +241,7 @@ export default class Article extends Vue {
   }
 
   initXML(xml: string) {
-    xml = this.appendGrossregionViaId('form[type=variant] placename[type=gemeinde], cit placename[type=gemeinde]', xml)
+    xml = this.appendGrossregionViaRef('form[type=variant] placename[type=gemeinde], cit placename[type=gemeinde]', xml)
     this.metaXML = this.fragementFromSelector('text > entry > form[type=lemma], text > entry > form[subtype=diminutive], text > entry > gramGrp', xml)
     this.bedeutungXML = this.fragementFromSelector('text > entry > sense', xml)
     this.verbreitungXML = this.fragementFromSelector('text > entry > usg[type=geo]', xml)
@@ -261,7 +280,7 @@ export default class Article extends Vue {
       content: ')';
     }
   }
-  form[type="lemma"] orth{
+  > form[type="lemma"] orth{
     margin-right: .5em;
     display: inline-block;
     font-size: 2.5em;
@@ -308,7 +327,7 @@ export default class Article extends Vue {
       }
     } 
   }
-  placename[xml\:id] {
+  placename[ref] {
     cursor: pointer;
     display: inline-block;
     opacity: .6;
