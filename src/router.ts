@@ -5,7 +5,7 @@ import NotFound from '@components/NotFound.vue'
 import Articles from '@components/Articles.vue'
 import Article from '@components/Article.vue'
 
-export default new Router({
+const r = new Router({
   mode : 'history',
   routes : [
     {
@@ -46,3 +46,9 @@ export default new Router({
     }
   ]
 })
+
+// r.beforeEach((ro) => {
+//   console.log(ro)
+// })
+
+export default r

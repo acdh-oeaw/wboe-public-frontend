@@ -64,9 +64,13 @@ export default class Main extends Vue {
   }
 
   get filteredWords() {
-    return this.wordsWithWeights.filter(w => {
-      return w[0].toLowerCase().indexOf(this.searchTerm.toLowerCase()) > -1
-    })
+    if (this.searchTerm) {
+      return this.wordsWithWeights.filter(w => {
+        return w[0].toLowerCase().indexOf(this.searchTerm.toLowerCase()) > -1
+      })
+    } else {
+      return _(this.wordsWithWeights).sampleSize(25).value()
+    }
   }
 
   updateWordProgress(e: any) {
