@@ -37,7 +37,7 @@
         </v-flex>
       </v-layout>
       <v-expansion-panel @click.native="handleArticleClick" v-model="expanded" expand>
-        <v-expansion-panel-content :disabled="isEmptyXML(verbreitungXML)">
+        <v-expansion-panel-content v-show="!isEmptyXML(verbreitungXML)">
           <v-layout slot="header">
             <v-flex xs12>
               <!-- <v-tooltip top>
@@ -47,7 +47,7 @@
               Verbreitung
             </v-flex>
             <v-flex>
-              <v-tooltip top>
+              <v-tooltip color="ci" max-width="400" top>
                 <v-icon class="mr-3" slot="activator">info_outline</v-icon>
                 <span>Lorem ipsum dolor sit, amet consectetur adipisicing elit. In consectetur sapiente quidem reiciendis, a dolor? Fuga placeat soluta perferendis error fugiat ducimus vero, aut provident sint facere tempore dignissimos. Vel.</span>
               </v-tooltip>
@@ -57,31 +57,31 @@
             <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="verbreitungXML" />
           </v-card>
         </v-expansion-panel-content>
-        <v-expansion-panel-content :disabled="isEmptyXML(belegauswahlXML)">
+        <v-expansion-panel-content v-show="!isEmptyXML(belegauswahlXML)">
           <div slot="header">Belegauswahl</div>
           <v-card class="article-xml belegauswahl">
             <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="belegauswahlXML" />
           </v-card>
         </v-expansion-panel-content>
-        <v-expansion-panel-content :disabled="isEmptyXML(etymologieXML)">
+        <v-expansion-panel-content v-show="!isEmptyXML(etymologieXML)">
           <div slot="header">Etymologie</div>
           <v-card class="article-xml etymologie">
             <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="etymologieXML" />
           </v-card>
         </v-expansion-panel-content>
-        <v-expansion-panel-content :disabled="isEmptyXML(bedeutungXML)">
+        <v-expansion-panel-content v-show="!isEmptyXML(bedeutungXML)">
           <div slot="header">Bedeutung</div>
           <v-card class="article-xml bedeutung">
             <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="bedeutungXML" />
           </v-card>
         </v-expansion-panel-content>
-        <v-expansion-panel-content :disabled="isEmptyXML(wortbildungXML)">
+        <v-expansion-panel-content v-show="!isEmptyXML(wortbildungXML)">
           <div slot="header">Wortbildung</div>
           <v-card class="article-xml wortbildung">
             <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="wortbildungXML" />
           </v-card>
         </v-expansion-panel-content>
-        <v-expansion-panel-content :disabled="isEmptyXML(redewendungenXML)">
+        <v-expansion-panel-content v-show="!isEmptyXML(redewendungenXML)">
           <div slot="header">Redewendungen</div>
           <v-card class="article-xml redewendungen">
             <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="redewendungenXML" />
@@ -272,24 +272,38 @@ export default class Article extends Vue {
       font-style: italic
     }
   }
-  gram[type="gender"] {
-    &::before{
-      content: '(';
-    }
-    &::after{
-      content: ')';
-    }
-  }
-  > form[type="lemma"] orth{
-    margin-right: .5em;
+  > form[type="lemma"] {
     display: inline-block;
     font-size: 2.5em;
+  }
+  > form[type="lemma"] + form[type="lemma"]::before {
+    content: ','
   }
   cit quote {
     &::before{
       content: "— "
     }
     font-style: italic;
+  }
+  gram {
+    &[type="gender"]:first-child::before{
+      display: inline;
+      content: '(';
+    }
+    &[type="gender"]:last-of-type::after{
+      content: ')';
+    }
+  }
+  > gramgrp{
+    padding-left: 1em;
+    &::after{
+      display: block;
+      content: ' ';
+      margin-bottom: -1em;
+    }
+  }
+  > form[type=variant] {
+    display: block;
   }
   def{
     letter-spacing: .075em;
@@ -406,23 +420,30 @@ export default class Article extends Vue {
       margin-right: .25em;
     }
   }
+  // sense > :first-child:not(sense) {
+  //   margin-left: 2em;
+  // }
   sense {
     margin-bottom: 1em;
     display: block;
+    margin-left: 1em;
+    padding-left: 1.5em;
     counter-increment: roman-counter;
     &:not(:only-of-type)::before{
+      position: absolute;
+      margin-left: -2em;
       font-weight: 700;
       content: counter(roman-counter, upper-roman) ". "
     }
     sense {
+      margin: 0;
       counter-increment: decimal-counter;
       &:not(:only-of-type)::before{
         font-weight: 700;
         content: counter(decimal-counter, decimal) ". "
       }
-      display: inline;
       sense {
-        display: inline;
+        margin: 0;
         counter-increment: alpha-counter;
         &:not(:only-of-type)::before{
           font-weight: 700;
