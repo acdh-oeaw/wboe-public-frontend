@@ -44,24 +44,37 @@
         <v-btn fab small @click="zoom = zoom - 1"><v-icon>remove</v-icon></v-btn>
       </v-flex>
       <v-flex class="text-xs-right" offset-xs10 xs1>
-        <v-tooltip color="ci" dark left>
+        <v-menu open-on-hover min-width="200" left lazy>
           <v-btn slot="activator" fab @click="zoom = zoom + 1"><v-icon>layers</v-icon></v-btn>
-          <span>Ansicht und Ebenen</span>
-        </v-tooltip>
+          <v-list class="context-menu-list" dense>
+            <v-list-tile @click="printMap('png')">
+              PNG
+            </v-list-tile>
+            <v-list-tile @click="printMap('svg')">
+              SVG
+            </v-list-tile>
+            <v-list-tile>
+              test
+            </v-list-tile>
+          </v-list>
+        </v-menu>
       </v-flex>
-      <v-menu min-width="200" :nudge-bottom="5" :nudge-left="5" left lazy offset-x offset-y>
+      <v-menu open-on-hover min-width="200" fixed left lazy>
         <v-btn slot="activator" color="ci" dark fab fixed bottom right >
           <v-icon>save_alt</v-icon>
         </v-btn>
         <v-list class="context-menu-list" dense>
-          <v-list-tile>
-            test
+          <v-subheader>
+            <v-icon class="mr-1" small>save_alt</v-icon> Export/Download
+          </v-subheader>
+          <v-list-tile @click="printMap('png')">
+            PNG (large)
           </v-list-tile>
-          <v-list-tile>
-            test
+          <v-list-tile @click="printMap('svg')">
+            SVG (large)
           </v-list-tile>
-          <v-list-tile>
-            test
+          <v-list-tile @click="printMap('json')">
+            GeoJSON
           </v-list-tile>
         </v-list>
       </v-menu>
@@ -86,9 +99,12 @@
   </div>
 </template>
 <script lang="ts">
+
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { LMap, LTileLayer, LMarker, LGeoJson } from 'vue2-leaflet'
 import { geoStore } from '../store/geo'
+import * as FileSaver from 'file-saver'
+import domtoimage from 'dom-to-image'
 import * as L from 'leaflet'
 import * as _ from 'lodash'
 
@@ -125,6 +141,7 @@ export default class Maps extends Vue {
   options = {
     onEachFeature: this.onEachFeatureFunction
   }
+  printPlugin: any = null
   searchItemType = 'Ort'
   layerGeoJson: any = null
   map: any = null
@@ -147,6 +164,20 @@ export default class Maps extends Vue {
   resetView() {
     this.zoom = defaultZoom
     this.center = defaultCenter
+  }
+
+  async printMap(type?: string) {
+    const el = (this.$refs.map as Vue).$el
+    if (type === 'svg') {
+      const blob = await domtoimage.toSvg(el)
+      FileSaver.saveAs(new Blob([blob]), 'map.svg')
+    } else if (type === 'png') {
+      const blob = await domtoimage.toPng(el)
+      FileSaver.saveAs(new Blob([blob]), 'map.png')
+    } else if (type === 'json') {
+      const blob = JSON.stringify(this.displayLocations, undefined, 2)
+      FileSaver.saveAs(new Blob([blob]), 'map.json')
+    }
   }
 
   selectLocations(locs: string[]) {
