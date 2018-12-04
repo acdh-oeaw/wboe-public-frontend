@@ -40,23 +40,23 @@
     <v-layout fill-height class="map-overlay pa-4">
       <v-flex xs1>
         <v-btn fab small @click="zoom = zoom + 1"><v-icon>add</v-icon></v-btn>
-        <v-btn fab small @click="resetView"><v-icon>home</v-icon></v-btn>
+        <v-tooltip color="ci" dark right>
+          <v-btn slot="activator" fab small @click="resetView"><v-icon>home</v-icon></v-btn>
+          <span>Ursprungsposition</span>
+        </v-tooltip>
         <v-btn fab small @click="zoom = zoom - 1"><v-icon>remove</v-icon></v-btn>
       </v-flex>
       <v-flex class="text-xs-right" offset-xs10 xs1>
-        <v-menu open-on-hover min-width="200" left lazy>
+        <v-menu :close-on-click="false" :close-on-content-click="false" open-on-hover min-width="200" left lazy>
           <v-btn slot="activator" fab @click="zoom = zoom + 1"><v-icon>layers</v-icon></v-btn>
-          <v-list class="context-menu-list" dense>
-            <v-list-tile @click="printMap('png')">
-              PNG
-            </v-list-tile>
-            <v-list-tile @click="printMap('svg')">
-              SVG
-            </v-list-tile>
-            <v-list-tile>
-              test
-            </v-list-tile>
-          </v-list>
+          <v-card scrollable>
+            <v-subheader>Ansicht und Ebenen</v-subheader>
+            <v-card-text>
+              <v-checkbox hide-details label="Checkbox 1"/>
+              <v-checkbox hide-details label="Checkbox 2"/>
+              <v-checkbox hide-details label="Checkbox 3"/>
+            </v-card-text>
+          </v-card>
         </v-menu>
       </v-flex>
       <v-menu open-on-hover min-width="200" fixed left lazy>
