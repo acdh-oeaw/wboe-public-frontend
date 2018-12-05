@@ -149,15 +149,20 @@ export default class Article extends Vue {
     return el.nodeName === 'PLACENAME' && el.getAttribute('ref') !== null
   }
 
-  getPlacenameSigleFromRef(ref: string): string {
-    return _.last(ref.split(/([#p])/))!
+  getPlacenameSigleFromRef(ref: string|null): string|null {
+    if (ref === null) {
+      return null
+    } else {
+      return _.last(ref.split(/([#p])/))!
+    }
   }
 
   handleArticleClick(e: MouseEvent) {
     if (this.isPlaceNameElement(e.target)) {
-      this.openMapsWithPlaces([
-        this.getPlacenameSigleFromRef((e.target as HTMLElement).getAttribute('ref')!)
-      ])
+      const sigle = this.getPlacenameSigleFromRef((e.target as HTMLElement).getAttribute('ref'))
+      if (sigle !== null) {
+        this.openMapsWithPlaces([ sigle ])
+      }
     }
   }
 
@@ -232,10 +237,12 @@ export default class Article extends Vue {
     const e = document.createElement('div')
     e.innerHTML = xml
     Array.from(e.querySelectorAll(selector)).forEach((v, i) => {
-      const grossregion = document.createElement('grossregion')
-      const sigle = this.getPlacenameSigleFromRef(v.getAttribute('ref') || '')
-      grossregion.innerHTML = this.getGrossregionFromGemeinde(sigle)
-      v.appendChild(grossregion)
+      const sigle = this.getPlacenameSigleFromRef(v.getAttribute('ref'))
+      if (sigle !== null) {
+        const grossregion = document.createElement('grossregion')
+        grossregion.innerHTML = this.getGrossregionFromGemeinde(sigle)
+        v.appendChild(grossregion)
+      }
     })
     return e.innerHTML
   }
