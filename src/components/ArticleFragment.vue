@@ -199,15 +199,16 @@ export default class ArticleFragment extends Vue {
       margin-right: .25em;
     }
   }
-  // sense > :first-child:not(sense) {
-  //   margin-left: 2em;
-  // }
   sense {
     margin-bottom: 1em;
     display: block;
     margin-left: 1em;
     padding-left: 1.5em;
     counter-increment: roman-counter;
+    &:only-of-type{
+      margin-left: 0em;
+      padding-left: 0em;
+    }
     &:empty{
       display: none;
     }

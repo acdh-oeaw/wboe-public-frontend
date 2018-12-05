@@ -237,7 +237,7 @@ export default class Article extends Vue {
     this.metaXML = this.fragementFromSelector('text > entry > form[type=lemma], text > entry > form[subtype=diminutive], text > entry > gramGrp', xml)
     this.bedeutungXML = this.fragementFromSelector('text > entry > sense', xml)
     this.verbreitungXML = this.fragementFromSelector('text > entry > usg[type=geo]', xml)
-    this.belegauswahlXML = this.fragementFromSelector('text > entry > form[type=variant]:not([subtype])', xml)
+    this.belegauswahlXML = this.fragementFromSelector('text > entry > form[type=dialect]:not([subtype])', xml)
     this.etymologieXML = this.fragementFromSelector('text > entry > etym', xml)
     this.wortbildungXML = this.fragementFromSelector('text > entry > re', xml, '[subtype=compound]')
     this.redewendungenXML = this.fragementFromSelector('text > entry > re', xml, '[subtype=MWE]')
