@@ -87,7 +87,11 @@
       :center.sync="center">
       <l-tile-layer
         :url="url"
-        :attribution="attribution"/>
+        :attribution="attribution" />
+      <l-tile-layer
+        v-if="showHillshades"
+        url="http://{s}.tiles.wmflabs.org/hillshading/{z}/{x}/{y}.png"
+      />
       <l-geo-json
         v-if="selectedLocations.length > 0"
         ref="layerGeoJson"
@@ -126,12 +130,27 @@ export default class Maps extends Vue {
   @Prop() loc: string|null
   @Prop() collection_ids: string|null
 
+  tileSets = [
+    {
+      name: 'Standard',
+      url: 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
+      attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL'
+    },
+    {
+      name: 'Toner',
+      url: 'http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png'
+    }
+  ]
+
+  showHillshades = false
+
   autoFit = false
   zoom: number = defaultZoom
   center: number[] = defaultCenter
   geoStore = geoStore
   fillColor: string = '#2467a7'
-  url: string = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+  // url = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+  url = this.tileSets[0].url
   attribution: string = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
   randomColors: object = {}
   mapOptions = {
