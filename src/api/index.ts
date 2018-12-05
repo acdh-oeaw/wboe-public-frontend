@@ -12,6 +12,10 @@ function parseXML(str: string) {
   return (new (window as any).DOMParser()).parseFromString(str, 'application/xml') as XMLDocument
 }
 
+export async function getWebsiteHtml(path: string): Promise<string> {
+  return (await fetch('https://vawadioe.acdh-dev.oeaw.ac.at/' + path)).text()
+}
+
 export async function getDocumentsByCollection(id: number): Promise<XMLDocument[]> {
   const r = await (await fetch(apiEndpoint + '/documents/?in_collections=28')).json()
   const ds = await (await fetch(esEndpoint, {

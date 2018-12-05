@@ -1,0 +1,240 @@
+<template>
+  <v-expansion-panel-content v-show="!isEmptyXML(content)">
+    <v-layout slot="header">
+      <v-flex xs12>
+        {{ title }}
+      </v-flex>
+      <v-flex>
+        <v-tooltip v-if="infoUrl" color="ci" max-width="400" top>
+          <v-icon class="mr-3" slot="activator">info_outline</v-icon>
+          <info-text :path="infoUrl" />
+        </v-tooltip>
+      </v-flex>
+    </v-layout>
+    <v-card class="article-xml">
+      <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="content" />
+    </v-card>
+  </v-expansion-panel-content>
+</template>
+<script lang="ts">
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import InfoText from '@components/InfoText.vue'
+
+@Component({
+  components: {
+    InfoText
+  }
+})
+export default class ArticleFragment extends Vue {
+
+  @Prop({ default: null }) content: string|null
+  @Prop({ default: null }) infoUrl: string|null
+  @Prop({ default: null }) title: string|null
+
+  isEmptyXML(xml: string): boolean {
+    const d = document.createElement('div')
+    d.innerHTML = xml
+    return d.innerText.trim() === ''
+  }
+}
+</script>
+<style lang="scss">
+.article-xml {
+  font-size: 115%;
+  form {
+    display: inline-block;
+  }
+  form[type="variant"] {
+    display: inline-block;
+    margin-right: .25em;
+    &[subtype="diminutive"] orth{
+      font-style: italic
+    }
+  }
+  > form[type="lemma"] {
+    display: inline-block;
+    font-size: 2.5em;
+  }
+  > form[type="lemma"] + form[type="lemma"]::before {
+    content: ','
+  }
+  cit quote {
+    &::before{
+      content: "— "
+    }
+    font-style: italic;
+  }
+  gram {
+    &[type="gender"]:first-child::before{
+      display: inline;
+      content: '(';
+    }
+    &[type="gender"]:last-of-type::after{
+      content: ')';
+    }
+  }
+  > gramgrp{
+    padding-left: 1em;
+    &::after{
+      display: block;
+      content: ' ';
+      margin-bottom: -1em;
+    }
+  }
+  > form[type=variant] {
+    display: block;
+  }
+  def{
+    letter-spacing: .075em;
+    &::before{
+      content: "'"
+    }
+    &::after{
+      content: "'"
+    }
+  }
+  cit, form[type=variant] {
+    usg[type=geo] {
+      &:first-of-type::before {
+        opacity: .6;
+        margin-right: -.25em;
+        display: inline;
+        content: '('
+      }
+      &:last-of-type::after {
+        opacity: .6;
+        margin-left: -.25em;
+        content: ')'
+      }
+      grossregion::before{
+        content: ', '
+      }
+    }
+  }
+  usg[type=geo] {
+    &:last-of-type placename{
+      &:last-child{
+        &::after{
+          display: none;
+        }
+      }
+    } 
+  }
+  placename[ref] {
+    cursor: pointer;
+    display: inline-block;
+    opacity: .6;
+    &[type=bundesland]{
+      &::after{
+        content: ';'
+      }
+    }
+    &[type=grossregion]{
+      &::after{
+        content: ','
+      }
+    }
+    &[type=gemeinde]{
+      &::after{
+        content: ','
+      }
+    }
+    &:hover{
+      text-decoration: underline
+    }
+  }
+  &.belegauswahl{
+    pron{
+      font-style: italic;
+    }
+    form:not(:last-child)::after{
+      content: ',';
+      margin-left: -.25em;
+    }
+  }
+  &.wortbildung, &.redewendungen{
+    re{
+      display: block;
+      margin-bottom: .25em;
+    }
+    form{
+      font-style: italic;
+      margin-right: .5em;
+    }
+    sense{
+      display: inline;
+      sense {
+        margin-left: 0;
+        sense {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+  cit{
+    form{
+      font-style: italic;
+    }
+  }
+  ref[type="bibl"]{
+    font-variant: small-caps;
+    * {
+      font-variant: normal;
+    }
+    &::before {
+      content: "("
+    }
+    &::after {
+      content: ")"
+    }
+    &>*:last-child {
+      margin-right: -.25em
+    }
+    &>*:first-child {
+      margin-left: -.25em
+    }
+    citedrange::before{
+      content: ":";
+      margin-left: -.25em;
+      margin-right: .25em;
+    }
+  }
+  // sense > :first-child:not(sense) {
+  //   margin-left: 2em;
+  // }
+  sense {
+    margin-bottom: 1em;
+    display: block;
+    margin-left: 1em;
+    padding-left: 1.5em;
+    counter-increment: roman-counter;
+    &:empty{
+      display: none;
+    }
+    &:not(:only-of-type)::before{
+      width: 1.6em;
+      position: absolute;
+      margin-left: -2em;
+      font-weight: 700;
+      text-align: right;
+      content: counter(roman-counter, upper-roman) ". "
+    }
+    sense {
+      margin: 0;
+      counter-increment: decimal-counter;
+      &:not(:only-of-type)::before{
+        font-weight: 700;
+        content: counter(decimal-counter, decimal) ". "
+      }
+      sense {
+        margin: 0;
+        counter-increment: alpha-counter;
+        &:not(:only-of-type)::before{
+          font-weight: 700;
+          content: counter(alpha-counter, lower-alpha) ") "
+        }
+      }
+    }
+  }
+}
+</style>
