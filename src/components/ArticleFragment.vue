@@ -5,10 +5,10 @@
         {{ title }}
       </v-flex>
       <v-flex>
-        <v-tooltip v-if="infoUrl" color="ci" max-width="400" top>
+        <v-menu open-on-hover v-if="infoUrl" max-width="400" top>
           <v-icon class="mr-3" slot="activator">info_outline</v-icon>
-          <info-text :path="infoUrl" />
-        </v-tooltip>
+          <info-text class="elevation-24 pa-4 white" :path="infoUrl" />
+        </v-menu>
       </v-flex>
     </v-layout>
     <v-card class="article-xml">
@@ -44,7 +44,7 @@ export default class ArticleFragment extends Vue {
   form {
     display: inline-block;
   }
-  form[type="variant"] {
+  form[type="dialect"] {
     display: inline-block;
     margin-right: .25em;
     &[subtype="diminutive"] orth{
@@ -93,7 +93,7 @@ export default class ArticleFragment extends Vue {
       content: "'"
     }
   }
-  cit, form[type=variant] {
+  cit, form[type=dialect] {
     usg[type=geo] {
       &:first-of-type::before {
         opacity: .6;

@@ -233,7 +233,7 @@ export default class Article extends Vue {
   }
 
   initXML(xml: string) {
-    xml = this.appendGrossregionViaRef('form[type=variant] placename[type=gemeinde], cit placename[type=gemeinde]', xml)
+    xml = this.appendGrossregionViaRef('form[type=dialect] placename[type=gemeinde], cit placename[type=gemeinde]', xml)
     this.metaXML = this.fragementFromSelector('text > entry > form[type=lemma], text > entry > form[subtype=diminutive], text > entry > gramGrp', xml)
     this.bedeutungXML = this.fragementFromSelector('text > entry > sense', xml)
     this.verbreitungXML = this.fragementFromSelector('text > entry > usg[type=geo]', xml)
