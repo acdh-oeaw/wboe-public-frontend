@@ -37,44 +37,13 @@
         </v-flex>
       </v-layout>
       <v-expansion-panel @click.native="handleArticleClick" v-model="expanded" expand>
-        <article-fragment info-url="?id=67" title="Verbreitung" :content="verbreitungXML" />
+        <article-fragment info-url="?id=67" :content="verbreitungXML" title="Verbreitung" />
         <article-fragment info-url="?id=68" :content="belegauswahlXML" title="Belegauswahl" />
         <article-fragment info-url="?id=69" :content="etymologieXML" title="Etymologie" />
         <article-fragment info-url="?id=70" :content="bedeutungXML" title="Bedeutung" />
         <article-fragment info-url="?id=71" :content="wortbildungXML" title="Wortbildung" />
         <article-fragment info-url="?id=72" :content="redewendungenXML" title="Redewendungen" />
-        <!-- <v-expansion-panel-content v-show="!isEmptyXML(belegauswahlXML)">
-          <div slot="header">Belegauswahl</div>
-          <v-card class="article-xml belegauswahl">
-            <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="belegauswahlXML" />
-          </v-card>
-        </v-expansion-panel-content>
-        <v-expansion-panel-content v-show="!isEmptyXML(etymologieXML)">
-          <div slot="header">Etymologie</div>
-          <v-card class="article-xml etymologie">
-            <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="etymologieXML" />
-          </v-card>
-        </v-expansion-panel-content>
-        <v-expansion-panel-content v-show="!isEmptyXML(bedeutungXML)">
-          <div slot="header">Bedeutung</div>
-          <v-card class="article-xml bedeutung">
-            <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="bedeutungXML" />
-          </v-card>
-        </v-expansion-panel-content>
-        <v-expansion-panel-content v-show="!isEmptyXML(wortbildungXML)">
-          <div slot="header">Wortbildung</div>
-          <v-card class="article-xml wortbildung">
-            <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="wortbildungXML" />
-          </v-card>
-        </v-expansion-panel-content>
-        <v-expansion-panel-content v-show="!isEmptyXML(redewendungenXML)">
-          <div slot="header">Redewendungen</div>
-          <v-card class="article-xml redewendungen">
-            <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="redewendungenXML" />
-          </v-card>
-        </v-expansion-panel-content> -->
       </v-expansion-panel>
-      <!-- <div class="article-xml" v-html="articleXML"> -->
     </v-flex>
   </v-layout>
 </template>
@@ -88,6 +57,7 @@ import { geoStore } from '../store/geo'
 import * as _ from 'lodash'
 import InfoText from '@components/InfoText.vue'
 import ArticleFragment from '@components/ArticleFragment.vue'
+
 @Component({
   components: {
     XmlEditor,

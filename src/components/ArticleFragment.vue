@@ -5,7 +5,7 @@
         {{ title }}
       </v-flex>
       <v-flex>
-        <v-menu open-on-hover v-if="infoUrl" max-width="400" top>
+        <v-menu open-on-hover v-if="infoUrl" max-width="400" max-height="95vh" top>
           <v-icon class="mr-3" slot="activator">info_outline</v-icon>
           <info-text class="elevation-24 pa-4 white" :path="infoUrl" />
         </v-menu>
@@ -95,11 +95,14 @@ export default class ArticleFragment extends Vue {
   }
   cit, form[type=dialect] {
     usg[type=geo] {
-      &:first-of-type::before {
+      &::before {
         opacity: .6;
         margin-right: -.25em;
         display: inline;
         content: '('
+      }
+      & ~ usg::before {
+        content: none;
       }
       &:last-of-type::after {
         opacity: .6;
@@ -154,21 +157,19 @@ export default class ArticleFragment extends Vue {
   }
   &.wortbildung, &.redewendungen{
     re{
-      display: block;
-      margin-bottom: .25em;
+      sense{
+        display: inline;
+        sense {
+          margin-left: 0;
+          sense {
+            margin-left: 0;
+          }
+        }
+      }
     }
     form{
       font-style: italic;
       margin-right: .5em;
-    }
-    sense{
-      display: inline;
-      sense {
-        margin-left: 0;
-        sense {
-          margin-left: 0;
-        }
-      }
     }
   }
   cit{
@@ -233,6 +234,14 @@ export default class ArticleFragment extends Vue {
         &:not(:only-of-type)::before{
           font-weight: 700;
           content: counter(alpha-counter, lower-alpha) ") "
+        }
+        sense {
+          margin: 0;
+          counter-increment: greek-counter;
+          &:not(:only-of-type)::before {
+            font-weight: 700;
+            content: counter(greek-counter, lower-greek) ". "
+          }
         }
       }
     }
