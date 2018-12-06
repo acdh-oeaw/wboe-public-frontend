@@ -4,6 +4,7 @@ import Maps from '@components/Maps.vue'
 import NotFound from '@components/NotFound.vue'
 import Articles from '@components/Articles.vue'
 import Article from '@components/Article.vue'
+import Database from '@components/Database.vue'
 
 const r = new Router({
   mode : 'history',
@@ -17,7 +18,7 @@ const r = new Router({
       component: Articles
     },
     {
-      path: '/articles/:file_name',
+      path: '/articles/:filename',
       component: Article,
       props: true
     },
@@ -38,6 +39,7 @@ const r = new Router({
     },
     {
       path: '/db',
+      component: Database,
       children: [
         {
           path: ''

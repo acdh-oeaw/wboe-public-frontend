@@ -45,13 +45,14 @@ export default class ArticleFragment extends Vue {
     display: inline-block;
   }
   form[type="dialect"] {
-    display: inline-block;
-    margin-right: .25em;
     &[subtype="diminutive"] orth{
       font-style: italic
     }
+    & + form[type="dialect"]::before {
+      content: ', ';
+    }
   }
-  > form[type="lemma"] {
+  > form[type="lemma"] > orth {
     display: inline-block;
     font-size: 2.5em;
   }
@@ -65,9 +66,15 @@ export default class ArticleFragment extends Vue {
     font-style: italic;
   }
   gram {
-    &[type="gender"]:first-child::before{
+    &[type="gender"]::before {
       display: inline;
       content: '(';
+    }
+    &[type="gender"] + [type="gender"]::before {
+      content: none;
+    }
+    &[type="gender"] ~ [type="gender"]::after {
+      content: ', '
     }
     &[type="gender"]:last-of-type::after{
       content: ')';

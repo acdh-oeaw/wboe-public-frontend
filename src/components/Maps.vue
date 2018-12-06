@@ -99,6 +99,10 @@
         :options="options"
         :optionsStyle="styleFunction"
         />
+      <l-geo-json
+        v-if="rivers !== null"
+        :geojson="rivers"
+      />
     </l-map>
   </div>
 </template>
@@ -143,7 +147,7 @@ export default class Maps extends Vue {
   ]
 
   showHillshades = false
-
+  rivers: any = null
   autoFit = false
   zoom: number = defaultZoom
   center: number[] = defaultCenter
@@ -317,7 +321,9 @@ export default class Maps extends Vue {
       return true
     }
   }
-  mounted() {
+  async mounted() {
+    // tslint:disable-next-line:max-line-length
+    // this.rivers = await (await fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_rivers_europe.geojson')).json()
     this.$nextTick(() => {
       this.layerGeoJson = this.$refs.layerGeoJson
       this.map = this.$refs.map

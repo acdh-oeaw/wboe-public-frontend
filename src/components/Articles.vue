@@ -14,7 +14,7 @@
       <v-list>
         <template v-for="(articles, i) in articlesByInitial">
           <v-subheader class="sticky" :key="'subheader' + i">{{ articles.initials }}</v-subheader>
-          <v-list-tile :to="`/articles/${ article.file_name.replace('.xml', '') }`" v-for="article in articles.articles" :key="article.title">
+          <v-list-tile :to="`/articles/${ article.filename.replace('.xml', '') }`" v-for="article in articles.articles" :key="article.title">
             <v-list-tile-title>
               {{ article.title }}
             </v-list-tile-title>
@@ -32,7 +32,7 @@ import * as _ from 'lodash'
 @Component
 // tslint:disable:max-line-length
 export default class Articles extends Vue {
-  articles: Array<{ title: string, file_name: string }> = []
+  articles: Array<{ title: string, filename: string }> = []
 
   getCleanInitial(lemmaName: string) {
     return lemmaName.replace(/\(.*\)/g, '')[0].toUpperCase() + lemmaName.replace(/\(.*\)/g, '')[1].toLowerCase()

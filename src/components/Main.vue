@@ -2,6 +2,7 @@
   <v-layout column fill-height>
     <v-flex class="text-xs-center">
       <v-text-field
+        :loading="loading"
         autofocus
         flat
         v-model="searchTerm"
@@ -29,7 +30,7 @@
         font-weight="800"
         font-family="HKGrotesk">
       <template slot-scope="{text, weight, word}">
-        <router-link class="word-cloud-link" :to="`/articles/${findArticleByTitle(text).file_name.replace('.xml', '')}`">
+        <router-link class="word-cloud-link" :to="`/articles/${findArticleByTitle(text).filename.replace('.xml', '')}`">
           {{ text }}
         </router-link>
       </template>
@@ -47,8 +48,8 @@ export default class Main extends Vue {
 
   wordProgress: number|null = null
   searchTerm: string = ''
-  articles: Array<{title: string, file_name: string}> = []
-
+  articles: Array<{title: string, filename: string}> = []
+  loading = false
   findArticleByTitle(title: string) {
     return this.articles.find(a => a.title === title)
   }
@@ -84,7 +85,9 @@ export default class Main extends Vue {
   }
 
   async mounted() {
+    this.loading = true
     this.articles = await getArticles()
+    this.loading = false
   }
 }
 </script>

@@ -3,7 +3,8 @@
     <v-flex xs12>
       <v-autocomplete
         label="Suche…"
-        :value="{ text: title, value: file_name.replace('.xml', '')}"
+        :value="{ text: title, value: filename.replace('.xml', '')}"
+        :loading="loading"
         clearable
         solo
         flat
@@ -14,7 +15,9 @@
       <v-layout align-baseline>
         <v-flex class="article-xml mb-3" v-html="metaXML" xs12 />
         <v-flex>
-          <v-btn small round flat @click="toggleAll">{{ isEveryArticleExpanded ? 'Einklappen' : 'Ausklappen'}}</v-btn>
+          <v-btn small round flat @click="toggleAll">
+            {{ isEveryArticleExpanded ? 'Einklappen' : 'Ausklappen'}}
+          </v-btn>
         </v-flex>
         <v-flex class="text-xs-right">
           <v-dialog v-model="showEditor" max-width="1000" content-class="fill-height" color="#2b2735" scrollable>
@@ -22,7 +25,7 @@
             <v-card color="#342f40" dark flat class="fill-height">
               <v-card-title class="pt-1 pb-1">
                 <v-flex>
-                  {{ file_name }}.xml
+                  {{ filename }}
                 </v-flex>
                 <v-flex class="text-xs-right">
                   <v-btn small round flat>download</v-btn>
@@ -67,12 +70,12 @@ import ArticleFragment from '@components/ArticleFragment.vue'
 })
 export default class Article extends Vue {
 
-  @Prop() file_name: string
+  @Prop() filename: string
 
   showEditor = false
   articles: Array<{text: string, value: string}> = []
   geoStore = geoStore
-
+  loading = false
   expanded = [
     false,
     false,
@@ -92,15 +95,15 @@ export default class Article extends Vue {
   redewendungenXML: string|null = null
   metaXML: string|null = null
 
-  getGrossregionFromGemeinde(sigle: string): string {
+  getGrossregionFromGemeinde(sigle: string): string|null {
     if (geoStore.grossregionen !== null) {
       const s = sigle.split(/([a-z])/)[0]
       const g = geoStore.grossregionen.features.find((f) => {
         return f.properties!.Sigle === s
       })
-      return g ? g.properties!.Grossreg : ''
+      return g ? g.properties!.Grossreg : null
     } else {
-      return ''
+      return null
     }
   }
 
@@ -112,7 +115,7 @@ export default class Article extends Vue {
     if (ref === null) {
       return null
     } else {
-      return _.last(ref.split(/([#p])/))!
+      return _.last(ref.split(/([#p])/)) || null
     }
   }
 
@@ -163,14 +166,14 @@ export default class Article extends Vue {
   }
 
   elementsFromDom(selector: string, body: string) {
-    const dom = document.createElement('div')
-    dom.innerHTML = body
-    return dom.querySelectorAll(selector)
+    const parser = new DOMParser()
+    const xmlDoc = parser.parseFromString(body, 'text/xml')
+    return xmlDoc.querySelectorAll(selector)
   }
 
-  @Watch('file_name')
+  @Watch('filename')
   onFileChange() {
-    this.initArticle(this.file_name)
+    this.initArticle(this.filename)
   }
 
   saveEditorXML() {
@@ -182,41 +185,48 @@ export default class Article extends Vue {
     this.articles = (await getArticles()).map(t => {
       return {
         text: t.title,
-        value: t.file_name.replace('.xml', '')
+        value: t.filename.replace('.xml', '')
       }
     })
-    this.initArticle(this.file_name)
+    this.initArticle(this.filename)
   }
 
   appendGrossregionViaRef(selector: string, xml: string) {
-    const e = document.createElement('div')
-    e.innerHTML = xml
-    Array.from(e.querySelectorAll(selector)).forEach((v, i) => {
+    const parser = new DOMParser()
+    const xmlDoc = parser.parseFromString(xml, 'text/xml')
+    Array.from(xmlDoc.querySelectorAll(selector)).forEach((v, i) => {
       const sigle = this.getPlacenameSigleFromRef(v.getAttribute('ref'))
       if (sigle !== null) {
-        const grossregion = document.createElement('grossregion')
-        grossregion.innerHTML = this.getGrossregionFromGemeinde(sigle)
-        v.appendChild(grossregion)
+        const reg = this.getGrossregionFromGemeinde(sigle)
+        if (reg !== null) {
+          const grossregion = document.createElement('grossregion')
+          grossregion.innerHTML = reg
+          v.appendChild(grossregion)
+        }
       }
     })
-    return e.innerHTML
+    const s = new XMLSerializer();
+    return s.serializeToString(xmlDoc)
   }
 
   initXML(xml: string) {
-    xml = this.appendGrossregionViaRef('form[type=dialect] placename[type=gemeinde], cit placename[type=gemeinde]', xml)
-    this.metaXML = this.fragementFromSelector('text > entry > form[type=lemma], text > entry > form[subtype=diminutive], text > entry > gramGrp', xml)
-    this.bedeutungXML = this.fragementFromSelector('text > entry > sense', xml)
-    this.verbreitungXML = this.fragementFromSelector('text > entry > usg[type=geo]', xml)
-    this.belegauswahlXML = this.fragementFromSelector('text > entry > form[type=dialect]:not([subtype])', xml)
-    this.etymologieXML = this.fragementFromSelector('text > entry > etym', xml)
-    this.wortbildungXML = this.fragementFromSelector('text > entry > re', xml, '[subtype=compound]')
-    this.redewendungenXML = this.fragementFromSelector('text > entry > re', xml, '[subtype=MWE]')
-    this.title = this.elementsFromDom('title', this.metaXML)[0].innerHTML
+    xml = xml.split('<body>').join('').split('</body>').join('')
+    xml = this.appendGrossregionViaRef('form[type=dialect] placeName[type=gemeinde], cit placeName[type=gemeinde]', xml)
+    this.metaXML = this.fragementFromSelector('entry > form[type=lemma], entry > form[subtype=diminutive], entry > gramGrp', xml)
+    this.bedeutungXML = this.fragementFromSelector('entry > sense', xml)
+    this.verbreitungXML = this.fragementFromSelector('entry > usg[type=geo]', xml)
+    this.belegauswahlXML = this.fragementFromSelector('entry > form[type=dialect]:not([subtype])', xml)
+    this.etymologieXML = this.fragementFromSelector('entry > etym', xml)
+    this.wortbildungXML = this.fragementFromSelector('entry > re', xml, '[subtype=compound]')
+    this.redewendungenXML = this.fragementFromSelector('entry > re', xml, '[subtype=MWE]')
+    this.title = this.elementsFromDom('title', xml)[0].innerHTML
   }
 
   async initArticle(fileName: string) {
+    this.loading = true
     this.articleXML = await getArticleByFileName(fileName + '.xml')
     this.initXML(this.articleXML)
+    this.loading = false
   }
 }
 </script>
