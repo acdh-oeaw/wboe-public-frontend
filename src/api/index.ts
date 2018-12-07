@@ -17,7 +17,12 @@ function parseXML(str: string) {
 }
 
 export async function getWebsiteHtml(path: string): Promise<string> {
+  path = txtEndpoint === path.substr(0, txtEndpoint.length) ? path.substr(txtEndpoint.length) : path
   return (await fetch(txtEndpoint + path)).text()
+}
+
+export function isExternUrl(url: string): boolean {
+  return txtEndpoint !== url.substr(0, txtEndpoint.length)
 }
 
 export async function getDocuments(page = 1, items = 100): Promise<any[]> {
