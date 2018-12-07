@@ -8,6 +8,7 @@ declare var process: {
 
 const esEndpoint = 'https://walk-want-grew.acdh.oeaw.ac.at/_search'
 const apiEndpoint = 'https://dboeannotation.acdh-dev.oeaw.ac.at/api'
+const txtEndpoint = 'https://vawadioe.acdh.oeaw.ac.at/lioetxt/'
 const localEndpoint = process.env.API_HOST || 'http://localhost:8081'
 const articleEndpoint = localEndpoint + '/api/article'
 
@@ -16,7 +17,7 @@ function parseXML(str: string) {
 }
 
 export async function getWebsiteHtml(path: string): Promise<string> {
-  return (await fetch('https://vawadioe.acdh-dev.oeaw.ac.at/' + path)).text()
+  return (await fetch(txtEndpoint + path)).text()
 }
 
 export async function getDocuments(page = 1, items = 100): Promise<any[]> {

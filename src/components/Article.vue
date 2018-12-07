@@ -40,12 +40,12 @@
         </v-flex>
       </v-layout>
       <v-expansion-panel @click.native="handleArticleClick" v-model="expanded" expand>
-        <article-fragment ext-info-url="?id=67" info-url="?id=82" :content="verbreitungXML" title="Verbreitung" />
-        <article-fragment ext-info-url="?id=68" info-url="?id=83" :content="belegauswahlXML" title="Belegauswahl" />
-        <article-fragment ext-info-url="?id=69" info-url="?id=84" :content="etymologieXML" title="Etymologie" />
-        <article-fragment ext-info-url="?id=70" info-url="?id=85" :content="bedeutungXML" title="Bedeutung" />
-        <article-fragment ext-info-url="?id=71" info-url="?id=86" :content="wortbildungXML" title="Wortbildung" />
-        <article-fragment ext-info-url="?id=72" info-url="?id=88" :content="redewendungenXML" title="Redewendungen" />
+        <article-fragment ext-info-url="wboe-artikel/verbreitung/" info-url="wboe-artikel/verbreitung-short/" :content="verbreitungXML" title="Verbreitung" />
+        <article-fragment ext-info-url="wboe-artikel/belegauswahl/" info-url="wboe-artikel/belegauswahl-short/" :content="belegauswahlXML" title="Belegauswahl" />
+        <article-fragment ext-info-url="wboe-artikel/etymologie/" info-url="wboe-artikel/etymologie-short/" :content="etymologieXML" title="Etymologie" />
+        <article-fragment ext-info-url="wboe-artikel/bedeutung/" info-url="wboe-artikel/bedeutung-short/" :content="bedeutungXML" title="Bedeutung" />
+        <article-fragment ext-info-url="wboe-artikel/wortbildung/" info-url="wboe-artikel/wortbildung-short/" :content="wortbildungXML" title="Wortbildung" />
+        <article-fragment ext-info-url="wboe-artikel/redewendungen/" info-url="wboe-artikel/redewendungen-short/" :content="redewendungenXML" title="Redewendungen" />
       </v-expansion-panel>
       <div class="text-xs-right pa-4" :title="editor.fullname">{{ editor.initials ? editor.initials : editor.fullname }}</div>
     </v-flex>
