@@ -47,6 +47,7 @@
         <article-fragment ext-info-url="?id=71" info-url="?id=86" :content="wortbildungXML" title="Wortbildung" />
         <article-fragment ext-info-url="?id=72" info-url="?id=88" :content="redewendungenXML" title="Redewendungen" />
       </v-expansion-panel>
+      <div class="text-xs-right pa-4" :title="editor.fullname">{{ editor.initials ? editor.initials : editor.fullname }}</div>
     </v-flex>
   </v-layout>
 </template>
@@ -76,6 +77,7 @@ export default class Article extends Vue {
   articles: Array<{text: string, value: string}> = []
   geoStore = geoStore
   loading = false
+  editor: Object = {'initials': '', 'fullname': ''}
   expanded = [
     false,
     false,
@@ -220,6 +222,13 @@ export default class Article extends Vue {
     this.wortbildungXML = this.fragementFromSelector('entry > re', xml, '[subtype=compound]')
     this.redewendungenXML = this.fragementFromSelector('entry > re', xml, '[subtype=MWE]')
     this.title = this.elementsFromDom('title', xml)[0].innerHTML
+    let aEditor = this.elementsFromDom('teiHeader > fileDesc > titleStmt > respStmt > name[ref]', xml)[0]
+    let aInitials = aEditor.getAttribute('ref')
+    aInitials = typeof aInitials === 'string' ? aInitials.substr(1) : ''
+    this.editor = {
+      'initials': aInitials,
+      'fullname': aEditor.innerHTML
+    }
   }
 
   async initArticle(fileName: string) {
