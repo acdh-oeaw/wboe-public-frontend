@@ -8,7 +8,7 @@
         <v-menu open-on-hover v-if="infoUrl" max-width="400" max-height="95vh" top left>
           <v-icon class="mr-3" slot="activator">info_outline</v-icon>
           <info-text class="elevation-24 pa-4 white" :path="infoUrl" />
-          <v-btn @click="showDetais = true" block color="secondary" class="my-0" dark v-if="extInfoUrl">Weitere Informationen</v-btn>
+          <v-btn @click="showDetais = true" block color="ci" class="ma-0" dark v-if="extInfoUrl">Weitere Informationen</v-btn>
         </v-menu>
       </v-flex>
       <v-dialog v-model="showDetais" max-width="1000" color="#2b2735" scrollable v-if="extInfoUrl">
@@ -219,7 +219,7 @@ export default class ArticleFragment extends Vue {
     }
     citedrange::before{
       content: ":";
-      margin-left: -.25em;
+      // margin-left: -.25em;
       margin-right: .25em;
     }
   }

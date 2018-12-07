@@ -27,7 +27,6 @@ export function isExternUrl(url: string): boolean {
 
 export async function getDocuments(page = 1, items = 100): Promise<any[]> {
   const r = await (await fetch(apiEndpoint + '/documents/?page=' + page + '&page_size=' + items)).json()
-  console.log(r.results.map((res: any) => res.es_id))
   const ds = (await axios({
     method: 'POST',
     data: {
