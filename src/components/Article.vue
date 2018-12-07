@@ -40,12 +40,12 @@
         </v-flex>
       </v-layout>
       <v-expansion-panel @click.native="handleArticleClick" v-model="expanded" expand>
-        <article-fragment info-url="?id=67" :content="verbreitungXML" title="Verbreitung" />
-        <article-fragment info-url="?id=68" :content="belegauswahlXML" title="Belegauswahl" />
-        <article-fragment info-url="?id=69" :content="etymologieXML" title="Etymologie" />
-        <article-fragment info-url="?id=70" :content="bedeutungXML" title="Bedeutung" />
-        <article-fragment info-url="?id=71" :content="wortbildungXML" title="Wortbildung" />
-        <article-fragment info-url="?id=72" :content="redewendungenXML" title="Redewendungen" />
+        <article-fragment ext-info-url="?id=67" info-url="?id=82" :content="verbreitungXML" title="Verbreitung" />
+        <article-fragment ext-info-url="?id=68" info-url="?id=83" :content="belegauswahlXML" title="Belegauswahl" />
+        <article-fragment ext-info-url="?id=69" info-url="?id=84" :content="etymologieXML" title="Etymologie" />
+        <article-fragment ext-info-url="?id=70" info-url="?id=85" :content="bedeutungXML" title="Bedeutung" />
+        <article-fragment ext-info-url="?id=71" info-url="?id=86" :content="wortbildungXML" title="Wortbildung" />
+        <article-fragment ext-info-url="?id=72" info-url="?id=88" :content="redewendungenXML" title="Redewendungen" />
       </v-expansion-panel>
     </v-flex>
   </v-layout>

@@ -22,4 +22,7 @@ export default class InfoText extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+  div /deep/ .frame > p:last-child {
+    margin-bottom: 0;
+  }
 </style>

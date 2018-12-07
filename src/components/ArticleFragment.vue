@@ -5,11 +5,20 @@
         {{ title }}
       </v-flex>
       <v-flex>
-        <v-menu open-on-hover v-if="infoUrl" max-width="400" max-height="95vh" top>
+        <v-menu open-on-hover v-if="infoUrl" max-width="400" max-height="95vh" top left>
           <v-icon class="mr-3" slot="activator">info_outline</v-icon>
           <info-text class="elevation-24 pa-4 white" :path="infoUrl" />
+          <v-btn @click="showDetais = true" block color="secondary" class="my-0" dark v-if="extInfoUrl">Weitere Informationen</v-btn>
         </v-menu>
       </v-flex>
+      <v-dialog v-model="showDetais" max-width="1000" color="#2b2735" scrollable v-if="extInfoUrl">
+        <v-card flat class="fill-height">
+          <div class="close-btn"><v-btn @click="showDetais = false" flat icon><v-icon dark>close</v-icon></v-btn></div>
+          <v-card-text class="pa-0 fill-height">
+            <info-text class="pa-4 white fill-height" :path="extInfoUrl" />
+          </v-card-text>
+        </v-card>
+      </v-dialog>
     </v-layout>
     <v-card class="article-xml">
       <v-card-text class="pl-4 pt-1 pr-4 pb-4" v-html="content" />
@@ -29,7 +38,10 @@ export default class ArticleFragment extends Vue {
 
   @Prop({ default: null }) content: string|null
   @Prop({ default: null }) infoUrl: string|null
+  @Prop({ default: null }) extInfoUrl: string|null
   @Prop({ default: null }) title: string|null
+
+  showDetais: Boolean = false
 
   isEmptyXML(xml: string): boolean {
     const d = document.createElement('div')
@@ -39,6 +51,10 @@ export default class ArticleFragment extends Vue {
 }
 </script>
 <style lang="scss">
+.close-btn {
+  position: absolute;
+  right: 0;
+}
 .article-xml {
   font-size: 115%;
   form {
