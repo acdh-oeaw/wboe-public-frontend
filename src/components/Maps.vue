@@ -273,7 +273,7 @@ export default class Maps extends Vue {
   get styleFunction() {
     let aThis: any = this
     return (feature: any) => {
-      let aSigleS: string = feature.properties.sigle.split('.')[0]
+      let aSigleS: string = feature.properties.sigle
       if (!aThis.randomColors[aSigleS]) {
         aThis.randomColors[aSigleS] = '#' + Math.floor(Math.random() * 16777215).toString(16)
       }
@@ -292,7 +292,7 @@ export default class Maps extends Vue {
       layer.bindTooltip(`
         <div>name: ${feature.properties.name}</div>
         <div>sigle: ${feature.properties.sigle}</div>
-        <div>sigle: ${feature.properties.sigle.split('.')[0]}</div>`,
+        <div>sigle: ${feature.properties.sigle}</div>`,
         { permanent: false, sticky: true }
       )
       layer.on('mouseover', function(this: any) {
@@ -302,7 +302,7 @@ export default class Maps extends Vue {
         });
       });
       layer.on('mouseout', function(this: any) {
-        const aSigleS = feature.properties.sigle.split('.')[0]
+        const aSigleS = feature.properties.sigle
         this.setStyle({
           fillColor: aThis.randomColors[aSigleS],
           fillOpacity: 0.5
