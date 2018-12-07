@@ -24,7 +24,7 @@
         :rotation="searchTerm === '' ? .875 : 0"
         :words="filteredWords"
         :animation-overlap="searchTerm === '' ? 10 : 1"
-        :animation-duration="searchTerm === '' ? 5000 : 500"
+        :animation-duration="searchTerm === '' ? ((visited) ? 0 : 5000) : 500"
         :spacing=".2"
         @update:progress="updateWordProgress"
         font-weight="800"
@@ -50,6 +50,7 @@ export default class Main extends Vue {
   searchTerm: string = ''
   articles: Array<{title: string, filename: string}> = []
   loading = false
+  visited: boolean = false
   findArticleByTitle(title: string) {
     return this.articles.find(a => a.title === title)
   }
@@ -82,6 +83,13 @@ export default class Main extends Vue {
 
   log(e: any) {
     console.log(e)
+  }
+
+  @Watch('$route')
+  siteChanged(to: any, from: any) {
+    if (from.path === '/') {
+      this.visited = true
+    }
   }
 
   async mounted() {
