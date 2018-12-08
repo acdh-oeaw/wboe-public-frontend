@@ -1,10 +1,15 @@
 <template>
-  <div v-if="subHtml">
-    <div><v-btn @click="subHtml = null" flat small><v-icon small>arrow_back</v-icon> Zurück</v-btn></div>
-    <div ref="infoContent" v-html="subHtml" />
-    <div><v-btn @click="subHtml = null" flat small><v-icon small>arrow_back</v-icon> Zurück</v-btn></div>
+  <div class="pa-3 mb-2 grey--text text-xs-center" v-if="error">
+    could not load {{ path }}.
   </div>
-  <div ref="infoContent" v-html="html" v-else/>
+  <div v-else>
+    <div v-if="subHtml !== null">
+      <div><v-btn @click="subHtml = null" flat small><v-icon small>arrow_back</v-icon> Zurück</v-btn></div>
+      <div ref="infoContent" v-html="subHtml" />
+      <div><v-btn @click="subHtml = null" flat small><v-icon small>arrow_back</v-icon> Zurück</v-btn></div>
+    </div>
+    <div ref="infoContent" v-html="html" v-else/>
+  </div>
 </template>
 <script lang="ts">
 
@@ -18,21 +23,21 @@ export default class InfoText extends Vue {
 
   html: string|null = null
   subHtml: string|null = null
+  error = false
 
   @Watch('html')
   @Watch('subHtml')
   htmlChanged() {
     Vue.nextTick(() => {
-      let aIcHtml: any = this.$refs['infoContent']
-      let aThis: any = this
-      aIcHtml.querySelectorAll('a').forEach(function (aLnk: any) {
-        aLnk.addEventListener('click', async function(e: any) {
+      const aIcHtml: any = this.$refs['infoContent']
+      aIcHtml.querySelectorAll('a').forEach((aLnk: any) => {
+        aLnk.addEventListener('click', async (e: any) => {
           if (e.target && e.target.href) {
-            e.preventDefault();
+            e.preventDefault()
             if (isExternUrl(e.target.href)) {
-              window.open(e.target.href, "_blank")
+              window.open(e.target.href, '_blank')
             } else {
-              aThis.subHtml = await getWebsiteHtml(e.target.href)
+              this.subHtml = await getWebsiteHtml(e.target.href)
             }
           }
         })
@@ -43,8 +48,12 @@ export default class InfoText extends Vue {
   async mounted() {
     console.log('mounted!')
     if (this.path !== null) {
-      this.html = await getWebsiteHtml(this.path)
-      this.htmlChanged()
+      try {
+        this.html = await getWebsiteHtml(this.path)
+        this.htmlChanged()
+      } catch (e) {
+        this.error = true
+      }
     }
   }
 }
