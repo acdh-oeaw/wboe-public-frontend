@@ -1,15 +1,21 @@
 {
   "cSpell.words": [
+    "Fragebogennummer",
+    "Hauptlemma",
+    "Kontext",
+    "Lautung",
     "Lazyload",
+    "Nebenlemma",
     "Vuetify",
     "Vuex",
+    "Wortart",
     "bundeslaender",
+    "daten",
     "gemeinden",
     "geojson",
     "grossregionen",
     "ortsliste",
     "ortslisten",
-    "daten",
     "sigle"
   ]
 }
