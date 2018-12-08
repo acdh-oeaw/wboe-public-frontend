@@ -20,12 +20,10 @@
               <template
                 slot="item"
                 slot-scope="data">
-                <v-list-tile>
-                  <v-list-tile-content>
-                    <v-list-tile-title>{{ data.item.text }}</v-list-tile-title>
-                    <v-list-tile-sub-title>{{ data.item.parents }}</v-list-tile-sub-title>
-                  </v-list-tile-content>
-                </v-list-tile>
+                <v-list-tile-content>
+                  <v-list-tile-title style="height: 19px;">{{ data.item.text }}</v-list-tile-title>
+                  <v-list-tile-sub-title style="font-size: 85%;">{{ data.item.parents }}</v-list-tile-sub-title>
+                </v-list-tile-content>
               </template>
             </v-autocomplete>
           </v-flex>
@@ -286,7 +284,7 @@ export default class Maps extends Vue {
         return {
           text: f.name,
           value: f.sigle,
-          parents: (f.parentsObj ? f.parentsObj.slice().reverse().map((o: any) => o.name).join(', ') + ' - ' : '')
+          parents: (f.parentsObj ? f.parentsObj.slice().reverse().map((o: any) => o.name).join(', ') : '')
         }
       })
     } else {
