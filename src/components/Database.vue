@@ -4,7 +4,7 @@
       <v-text-field
         autofocus
         flat
-        label="Suche…"
+        label="Datenbank durchsuchen…"
         prepend-inner-icon="search"
         solo
         clearable

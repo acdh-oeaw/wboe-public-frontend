@@ -48,13 +48,18 @@
       </v-flex>
       <v-flex class="text-xs-right" offset-xs10 xs1>
         <v-menu :close-on-click="false" :close-on-content-click="false" open-on-hover min-width="200" left lazy>
-          <v-btn slot="activator" fab @click="zoom = zoom + 1"><v-icon>layers</v-icon></v-btn>
+          <v-btn slot="activator" fab @click="true"><v-icon>layers</v-icon></v-btn>
           <v-card scrollable>
-            <v-subheader>Ansicht und Ebenen</v-subheader>
+            <v-card-title>
+              <small class="grey--text">Ansicht und Ebenen</small>
+            </v-card-title>
+            <v-divider />
             <v-card-text>
-              <v-checkbox hide-details label="Checkbox 1"/>
-              <v-checkbox hide-details label="Checkbox 2"/>
-              <v-checkbox hide-details label="Checkbox 3"/>
+              <v-radio-group v-model="selectedTileSet">
+                <v-radio v-for="(tileSet, i) in tileSets" :value="i" :key="i" :label="tileSet.name" />
+              </v-radio-group>
+              <v-checkbox v-model="showRivers" hide-details label="Flüsse"/>
+              <v-checkbox v-model="showHillshades" hide-details label="Gebirge"/>
             </v-card-text>
           </v-card>
         </v-menu>
@@ -86,8 +91,8 @@
       :zoom.sync="zoom"
       :center.sync="center">
       <l-tile-layer
-        :url="url"
-        :attribution="attribution" />
+        :url="tileSetUrl"
+        :attribution="tileSets[selectedTileSet].attribution" />
       <l-tile-layer
         v-if="showHillshades"
         url="http://{s}.tiles.wmflabs.org/hillshading/{z}/{x}/{y}.png"
@@ -100,7 +105,7 @@
         :optionsStyle="styleFunction"
         />
       <l-geo-json
-        v-if="rivers !== null"
+        v-if="showRivers && rivers !== null"
         :geojson="rivers"
       />
     </l-map>
@@ -145,8 +150,11 @@ export default class Maps extends Vue {
       url: 'http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png'
     }
   ]
+  selectedTileSet = 0
 
   showHillshades = false
+  showRivers = false
+
   rivers: any = null
   autoFit = false
   zoom: number = defaultZoom
@@ -154,7 +162,6 @@ export default class Maps extends Vue {
   geoStore = geoStore
   fillColor: string = '#2467a7'
   // url = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
-  url = this.tileSets[0].url
   attribution: string = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
   randomColors: object = {}
   mapOptions = {
@@ -168,6 +175,10 @@ export default class Maps extends Vue {
   searchItemType = 'Ort'
   layerGeoJson: any = null
   map: any = null
+
+  get tileSetUrl() {
+    return this.tileSets[this.selectedTileSet].url
+  }
 
   get selectedLocations() {
     if (this.loc) {
@@ -322,9 +333,12 @@ export default class Maps extends Vue {
       return true
     }
   }
-  async mounted() {
+  async loadRivers() {
     // tslint:disable-next-line:max-line-length
-    // this.rivers = await (await fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_rivers_europe.geojson')).json()
+    this.rivers = await (await fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_rivers_europe.geojson')).json()
+  }
+  mounted() {
+    this.loadRivers()
     this.$nextTick(() => {
       this.layerGeoJson = this.$refs.layerGeoJson
       this.map = this.$refs.map

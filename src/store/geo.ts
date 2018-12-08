@@ -2,13 +2,6 @@
 import * as geojson from 'geojson'
 import * as _ from 'lodash'
 
-export class Store {
-  public _gemeinden = geoStore.gemeinden
-  get gemeinden() {
-    return this._gemeinden
-  }
-}
-
 export const geoStore = {
   gemeinden: null as geojson.FeatureCollection|null,
   grossregionen: null as geojson.FeatureCollection|null,
@@ -87,7 +80,7 @@ function getOrtslistenDaten (aOlDaten: any): any|null {
   return aOlDaten
 }
 
-function getOrtsliste (aOlDatenObj: any): any|null {
+function getOrtsliste(aOlDatenObj: any): any|null {
   let aList: any[] = []
   if (Array.isArray(aOlDatenObj)) {
     aOlDatenObj.forEach((aObj: any) => {
