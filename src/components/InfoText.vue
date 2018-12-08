@@ -1,8 +1,10 @@
 <template>
-  <div class="pa-3 mb-2 grey--text text-xs-center" v-if="error">
+  <div class="pa-2 mb-2 grey--text text-xs-center" v-if="error">
     could not load {{ path }}.
   </div>
   <div v-else>
+    <slot />
+    <div class="pa-2 grey--text text-xs-center" v-if="html === ''">Info-Text "{{ path }}" is empty</div>
     <div v-if="subHtml !== null">
       <div><v-btn @click="subHtml = null" flat small><v-icon small>arrow_back</v-icon> Zurück</v-btn></div>
       <div ref="infoContent" v-html="subHtml" />

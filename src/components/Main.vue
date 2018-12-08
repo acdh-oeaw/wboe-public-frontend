@@ -1,8 +1,5 @@
 <template>
   <v-layout column fill-height>
-    <v-flex>
-      <info-text path="lioe-start/einleitungstext/" />
-    </v-flex>
     <v-flex class="text-xs-center">
       <v-text-field
         :loading="loading"
@@ -14,6 +11,9 @@
         solo
         clearable
       />
+    </v-flex>
+    <v-flex>
+      <info-text path="lioe-start/einleitungstext/" />
     </v-flex>
     <v-flex xs12>
       <!-- <v-progress-linear

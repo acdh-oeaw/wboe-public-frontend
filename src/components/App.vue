@@ -25,7 +25,7 @@
                 centered
                 color="ci"
                 slider-color="white">
-                <v-tab to="/">Main</v-tab>
+                <v-tab to="/">Home</v-tab>
                 <v-tab to="/articles">WBÖ-Artikel</v-tab>
                 <v-tab to="/maps">Karten</v-tab>
                 <v-tab to="/db">Datenbank</v-tab>

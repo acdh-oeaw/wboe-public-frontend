@@ -13,6 +13,7 @@
       />
     </v-flex>
     <v-flex xs12>
+      <info-text class="pa-4" path="wboe-artikel/"></info-text>
       <v-list>
         <template v-for="(articles, i) in articlesByInitial">
           <v-subheader class="sticky" :key="'subheader' + i">{{ articles.initials }}</v-subheader>
@@ -29,9 +30,14 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { getArticles } from '../api'
+import InfoText from '@components/InfoText.vue'
 import * as _ from 'lodash'
 
-@Component
+@Component({
+  components: {
+    InfoText
+  }
+})
 // tslint:disable:max-line-length
 export default class Articles extends Vue {
 
