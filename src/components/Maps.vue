@@ -20,6 +20,9 @@
               <template
                 slot="item"
                 slot-scope="data">
+                <v-list-tile-action>
+                  <v-checkbox v-model="data.tile.props.value"></v-checkbox>
+                </v-list-tile-action>
                 <v-list-tile-content>
                   <v-list-tile-title style="height: 19px;">{{ data.item.text }}</v-list-tile-title>
                   <v-list-tile-sub-title style="font-size: 85%;">{{ data.item.parents }}</v-list-tile-sub-title>
