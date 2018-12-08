@@ -12,8 +12,10 @@
         </v-menu>
       </v-flex>
       <v-dialog v-model="showDetais" max-width="1000" color="#2b2735" scrollable v-if="extInfoUrl">
-        <v-card flat class="fill-height">
-          <div class="close-btn"><v-btn @click="showDetais = false" flat icon><v-icon dark>close</v-icon></v-btn></div>
+        <v-card flat class="fill-height pa-4">
+          <div class="close-btn">
+            <v-btn @click="showDetais = false" flat icon><v-icon dark>close</v-icon></v-btn>
+          </div>
           <v-card-text class="pa-0 fill-height">
             <info-text class="pa-4 white fill-height" :path="extInfoUrl" />
           </v-card-text>
