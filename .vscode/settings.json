@@ -6,6 +6,10 @@
     "bundeslaender",
     "gemeinden",
     "geojson",
-    "grossregionen"
+    "grossregionen",
+    "ortsliste",
+    "ortslisten",
+    "daten",
+    "sigle"
   ]
 }
