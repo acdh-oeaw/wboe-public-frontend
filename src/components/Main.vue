@@ -1,7 +1,7 @@
 <template>
   <v-layout column fill-height>
     <v-flex>
-      <info-text path="lioe-start/einleitungstext" />
+      <info-text path="lioe-start/einleitungstext/" />
     </v-flex>
     <v-flex class="text-xs-center">
       <v-text-field
