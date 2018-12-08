@@ -126,7 +126,7 @@
 <script lang="ts">
 
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-import { LMap, LTileLayer, LMarker, LGeoJson } from 'vue2-leaflet'
+import { LMap, LTileLayer, LMarker, LGeoJson, LIconDefault } from 'vue2-leaflet'
 import { geoStore } from '../store/geo'
 import * as FileSaver from 'file-saver'
 import domtoimage from 'dom-to-image'
@@ -136,7 +136,7 @@ import * as _ from 'lodash'
 const defaultCenter = [47.64318610543658, 13.53515625]
 const defaultZoom = 7
 
-import axios from 'axios';
+import axios from 'axios'
 
 @Component({
   components: {
@@ -181,7 +181,17 @@ export default class Maps extends Vue {
     renderer: L.canvas()
   }
   options = {
-    onEachFeature: this.onEachFeatureFunction
+    onEachFeature: this.onEachFeatureFunction,
+    pointToLayer: (feature: any, latlng: any) => {
+			return L.circleMarker(latlng, {
+				radius: 3,
+				fillColor: '#ff7800',
+				color: '#000',
+				weight: 1,
+				opacity: 1,
+				fillOpacity: 0.8
+			})
+		}
   }
   printPlugin: any = null
   searchItemType = 'Ort'

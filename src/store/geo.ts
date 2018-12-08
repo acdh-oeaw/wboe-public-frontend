@@ -12,7 +12,7 @@ export const geoStore = {
 }
 
 async function init() {
-  geoStore.gemeinden = await (await fetch('/static/gemeinden-geojson-optimized.json')).json() as geojson.FeatureCollection
+  geoStore.gemeinden = await (await fetch('/static/gemeinden-punkte-geojson.json')).json() as geojson.FeatureCollection
   geoStore.grossregionen = await (await fetch('/static/grossregionen-geojson-optimized.json')).json() as geojson.FeatureCollection
   geoStore.bundeslaender = await (await fetch('/static/bundeslaender-geojson-optimized.json')).json() as geojson.FeatureCollection
   geoStore.ortslistenDaten = getOrtslistenDaten(await (await fetch('/static/Ortsdatenbank_Orte-Gemeinden-Kleinregionen-Grossregionen-Bundeslaender_nur+OE+STir.json')).json() as geojson.FeatureCollection)
