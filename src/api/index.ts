@@ -61,9 +61,9 @@ export async function getDocumentsByCollection(id: number): Promise<XMLDocument[
   return ds.hits.hits
 }
 
-export async function getArticles(): Promise<Array<{ title: string, filename: string }>> {
+export async function getArticles(search = 'f'): Promise<Array<{ title: string, filename: string }>> {
   // tslint:disable-next-line:max-line-length
-  const r = await (await fetch(articleEndpoint + '?initial=f')).json()
+  const r = await (await fetch(articleEndpoint + '?initial=' + search)).json()
   return r.results.article
 }
 

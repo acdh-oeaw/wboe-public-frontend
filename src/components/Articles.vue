@@ -7,6 +7,7 @@
         flat
         label="Suche…"
         prepend-inner-icon="search"
+        @input="debouncedSearchArticle"
         solo
         clearable
       />
@@ -15,7 +16,7 @@
       <v-list>
         <template v-for="(articles, i) in articlesByInitial">
           <v-subheader class="sticky" :key="'subheader' + i">{{ articles.initials }}</v-subheader>
-          <v-list-tile :to="`/articles/${ article.filename.replace('.xml', '') }`" v-for="article in articles.articles" :key="article.title">
+          <v-list-tile :to="`/articles/${ article.filename.replace('.xml', '') }`" v-for="article in articles.articles" :key="article.filename">
             <v-list-tile-title>
               {{ article.title }}
             </v-list-tile-title>
@@ -33,9 +34,10 @@ import * as _ from 'lodash'
 @Component
 // tslint:disable:max-line-length
 export default class Articles extends Vue {
-  
+
   articles: Array<{ title: string, filename: string }> = []
   loading = false
+  debouncedSearchArticle = _.debounce(this.searchArticle, 250)
 
   getCleanInitial(lemmaName: string) {
     return lemmaName.replace(/\(.*\)/g, '')[0].toUpperCase() + lemmaName.replace(/\(.*\)/g, '')[1].toLowerCase()
@@ -54,6 +56,16 @@ export default class Articles extends Vue {
   async mounted() {
     this.loading = true
     this.articles = await getArticles()
+    this.loading = false
+  }
+
+  async searchArticle(search: string) {
+    this.loading = true
+    if (search) {
+      this.articles = await getArticles(search)
+    } else {
+      this.articles = await getArticles()
+    }
     this.loading = false
   }
 }
