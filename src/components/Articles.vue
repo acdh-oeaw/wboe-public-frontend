@@ -2,6 +2,7 @@
   <v-layout column>
     <v-flex class="text-xs-center">
       <v-text-field
+        :loading="loading"
         autofocus
         flat
         label="Suche…"
@@ -32,7 +33,9 @@ import * as _ from 'lodash'
 @Component
 // tslint:disable:max-line-length
 export default class Articles extends Vue {
+  
   articles: Array<{ title: string, filename: string }> = []
+  loading = false
 
   getCleanInitial(lemmaName: string) {
     return lemmaName.replace(/\(.*\)/g, '')[0].toUpperCase() + lemmaName.replace(/\(.*\)/g, '')[1].toLowerCase()
@@ -49,7 +52,9 @@ export default class Articles extends Vue {
   }
 
   async mounted() {
+    this.loading = true
     this.articles = await getArticles()
+    this.loading = false
   }
 }
 </script>
