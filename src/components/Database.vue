@@ -12,13 +12,19 @@
     </v-flex>
     <v-flex>
       <v-data-table
+        select-all
+        class="data-table"
+        :rows-per-page-items="[10, 25, 50, 100]"
+        :pagination.sync="pagination"
         :headers="headers"
         :loading="loading"
-        :items="items"
-        class="elevation-1">
+        :items="items">
         <template slot="items" slot-scope="props">
-          <td v-for="(header, i) in headers" :key="i">
-            {{ props.item[header.value] }}
+          <td>
+            <v-checkbox :input-value="props.selected" primary hide-details />
+          </td>
+          <td v-line-clamp="{ lines: 2, text: props.item[header.value] }" v-for="(header, i) in headers" :key="i">
+            <!-- {{ props.item[header.value] }} -->
           </td>
         </template>
       </v-data-table>
@@ -33,6 +39,13 @@ import { getDocuments } from '../api'
 export default class Database extends Vue {
   items: any[] = []
   loading = false
+  pagination = {
+    descending: true,
+    page: 1,
+    rowsPerPage: 50,
+    sortBy: null,
+    // totalItems: number
+  }
   headers = [
     { text: 'Hauptlemma', value: 'Hauptlemma' },
     { text: 'Wortart', value: 'Wortart' },

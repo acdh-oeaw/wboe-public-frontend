@@ -46,6 +46,7 @@
     "vue-class-component": "^6.3.2",
     "vue-codemirror-lite": "^1.0.4",
     "vue-lazyload": "^1.2.6",
+    "vue-line-clamp-extended": "^1.0.0",
     "vue-mixins": "^0.3.6",
     "vue-property-decorator": "^6.0.0",
     "vue-router": "^3.0.1",

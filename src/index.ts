@@ -5,11 +5,11 @@ import router from '@src/router'
 import VueRouter from 'vue-router'
 import * as fontLoader from 'webfontloader'
 import Vuetify from 'vuetify'
-// import store from './store'
+import { lineClamp } from 'vue-line-clamp-extended'
 import VueLazyload from 'vue-lazyload'
 
 Vue.config.productionTip = true
-
+Vue.directive('line-clamp', lineClamp)
 Vue.use(Vuex)
 Vue.use(VueRouter)
 Vue.use(Vuetify, {

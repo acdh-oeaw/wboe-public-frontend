@@ -26,6 +26,11 @@
   border-top: 0;
 }
 
+table.v-table thead th,
+table.v-table tbody td{
+  padding: 0 8px !important;
+}
+
 table thead tr{
   border-bottom: 0 !important;
 }
