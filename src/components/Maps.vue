@@ -16,7 +16,18 @@
               prepend-inner-icon="search"
               solo
               clearable
-              multiple />
+              multiple>
+              <template
+                slot="item"
+                slot-scope="data">
+                <v-list-tile>
+                  <v-list-tile-content>
+                    <v-list-tile-title>{{ data.item.text }}</v-list-tile-title>
+                    <v-list-tile-sub-title>{{ data.item.parents }}</v-list-tile-sub-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+              </template>
+            </v-autocomplete>
           </v-flex>
           <v-flex align-content-center fill-height>
             <v-select
@@ -273,8 +284,9 @@ export default class Maps extends Vue {
     if (!this.isLoading) {
       return this.geoStore.ortsliste.map((f: any) => {
         return {
-          text: (f.parentsObj ? f.parentsObj.slice().reverse().map((f: any) => { return f.name }).join(', ') + ' - ' : '') + f.name,
-          value: f.sigle
+          text: f.name,
+          value: f.sigle,
+          parents: (f.parentsObj ? f.parentsObj.slice().reverse().map((o: any) => o.name).join(', ') + ' - ' : '')
         }
       })
     } else {
