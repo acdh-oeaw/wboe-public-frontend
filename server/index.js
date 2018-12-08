@@ -62,25 +62,18 @@ app.get('/api/article/:article', async (req, res) => {
 
 app.post('/es-query', async (req, res) => {
   const q = req.body
-  const r = (await axios({
-    method: 'GET',
-    data: q,
-    url: 'https://walk-want-grew.acdh.oeaw.ac.at/_search'
-  })).data
-  res.send(r)
+  try {
+    const r = (await axios({
+      method: 'GET',
+      data: q,
+      url: 'https://walk-want-grew.acdh.oeaw.ac.at/_search'
+    })).data
+    res.send(r)
+  } catch (e) {
+    console.log(e.response.data)
+    res.send(e)
+  }
 })
-
-// app.get('/articles', (req, res) => {
-//   const files = fs.readdirSync(path.join(__dirname, '../dist/static/article'))
-//   const articles = files.map((name) => {
-//     return {
-//       file_name: name,
-//       title: fs.readFileSync(path.join(__dirname, '../dist/static/article', name), 'utf8')
-//         .match(/(<title>)(.*)(?=<\/title>)/g)[0].replace('<title>', '')
-//       }
-//   })
-//   res.send(articles)
-// })
 
 app.use('/', express.static(path.join(__dirname, '../dist/')))
 app.use('*', express.static(path.join(__dirname, '../dist/index.html')))
