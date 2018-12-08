@@ -1,5 +1,8 @@
 <template>
   <v-layout column fill-height>
+    <v-flex>
+      <info-text path="lioe-start/einleitungstext" />
+    </v-flex>
     <v-flex class="text-xs-center">
       <v-text-field
         :loading="loading"
@@ -41,9 +44,14 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import * as _ from 'lodash'
+import InfoText from '@components/InfoText.vue'
 import { getArticles } from '../api'
 
-@Component
+@Component({
+  components: {
+    InfoText
+  }
+})
 export default class Main extends Vue {
 
   wordProgress: number|null = null
