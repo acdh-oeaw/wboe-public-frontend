@@ -18,6 +18,9 @@ function parseXML(str: string) {
 
 export async function getWebsiteHtml(path: string): Promise<string> {
   path = txtEndpoint === path.substr(0, txtEndpoint.length) ? path.substr(txtEndpoint.length) : path
+  if (path.substr(path.length - 1) !== '/' ) {
+    path += '/'
+  }
   return (await fetch(txtEndpoint + path)).text()
 }
 
