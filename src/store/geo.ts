@@ -7,20 +7,44 @@ export const geoStore = {
   grossregionen: null as geojson.FeatureCollection|null,
   bundeslaender: null as geojson.FeatureCollection|null,
   ortslistenDaten: null as any|null,
-  ortsliste: null as any|null
+  ortsliste: null as any|null,
+  ortslisteGeo: null as any|null
 }
 
 async function init() {
   geoStore.gemeinden = await (await fetch('/static/gemeinden-geojson-optimized.json')).json() as geojson.FeatureCollection
-  geoStore.bundeslaender = await (await fetch('/static/bundeslaender-geojson-optimized.json')).json() as geojson.FeatureCollection
   geoStore.grossregionen = await (await fetch('/static/grossregionen-geojson-optimized.json')).json() as geojson.FeatureCollection
+  geoStore.bundeslaender = await (await fetch('/static/bundeslaender-geojson-optimized.json')).json() as geojson.FeatureCollection
   geoStore.ortslistenDaten = getOrtslistenDaten(await (await fetch('/static/Ortsdatenbank_Orte-Gemeinden-Kleinregionen-Grossregionen-Bundeslaender_nur+OE+STir.json')).json() as geojson.FeatureCollection)
   geoStore.ortsliste = geoStore.ortslistenDaten !== null ? geoStore.ortslistenDaten.all || null : null
+  geoStore.ortslisteGeo = filterOrtslisteByGeoJSON(geoStore.ortsliste, [...geoStore.gemeinden!.features, ...geoStore.grossregionen!.features, ...geoStore.bundeslaender!.features])
+}
+
+function filterOrtslisteByGeoJSON (oList: any, gList: any) {
+  if (oList !== null && gList !== null) {
+    let nOList: any[] = []
+    let mSigle: any[] = []
+    let gListSigles = gList.map((gObj: any) => {
+      return gObj.properties.sigle || gObj.properties.Sigle
+    })
+    oList.forEach((oObj: any) => {
+      if (gListSigles.indexOf(oObj.sigle) > -1) {
+        nOList.push(oObj)
+      } else {
+        mSigle.push(oObj.sigle)
+      }
+    })
+    if (mSigle.length > 0) {
+      console.log('Fehlende Sigle in geoJSONs:', mSigle)
+    }
+    return nOList.length > 0 ? nOList : null
+  } else {
+    return null
+  }
 }
 
 function getOrtslistenDaten (aOlDaten: any): any|null {
   if (aOlDaten !== null) {
-    // console.log(aOlDaten && aOlDaten.uFields)
     aOlDaten.all = []
     aOlDaten.obj = {}
     aOlDaten.allObj = {}

@@ -282,7 +282,7 @@ export default class Maps extends Vue {
 
   get locationsSearchItems() {
     if (!this.isLoading) {
-      return this.geoStore.ortsliste.map((f: any) => {
+      return this.geoStore.ortslisteGeo.map((f: any) => {
         return {
           text: f.name,
           value: f.sigle,
