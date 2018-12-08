@@ -6,26 +6,51 @@
         flat
         label="Datenbank durchsuchen…"
         prepend-inner-icon="search"
+        v-model="searchTerm"
+        @input="debouncedSearchDatabase"
+        :loading="searching"
         solo
         clearable
       />
     </v-flex>
     <v-flex>
       <v-data-table
+        v-model="selected"
         select-all
         class="data-table"
+        :total-items="pagination.totalItems"
+        rows-per-page-text="Dokumente pro Seite"
         :rows-per-page-items="[10, 25, 50, 100]"
         :pagination.sync="pagination"
         :headers="headers"
         :loading="loading"
+        item-key="id"
         :items="items">
+        <v-flex slot="actions-prepend" align-start>
+          <v-tooltip color="ci" top :disabled="selected.length > 0">
+            <v-btn
+              slot="activator"
+              :disabled="selected.length === 0"
+              small
+              flat
+              class="pl-3 pr-3"
+              round
+              color="ci">
+              auf Karte zeigen ({{ selected.length }})
+            </v-btn>
+            <span>Wählen Sie zuvor Dokumente aus</span>
+          </v-tooltip>
+        </v-flex>
         <template slot="items" slot-scope="props">
           <td>
-            <v-checkbox :input-value="props.selected" primary hide-details />
+            <v-checkbox v-model="props.selected" hide-details />
           </td>
-          <td v-line-clamp="{ lines: 2, text: props.item[header.value] }" v-for="(header, i) in headers" :key="i">
-            <!-- {{ props.item[header.value] }} -->
+          <td class="line-clamp" v-for="(header, i) in headers" :key="i">
+            {{ props.item[header.value] }}
           </td>
+        </template>
+        <template slot="pageText" slot-scope="props">
+          {{ props.pageStart }} - {{ props.pageStop }} von {{ props.itemsLength }}
         </template>
       </v-data-table>
     </v-flex>
@@ -33,18 +58,22 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-import { getDocuments } from '../api'
+import { getDocuments, searchDocuments } from '../api'
+import * as _ from 'lodash'
 
 @Component
 export default class Database extends Vue {
   items: any[] = []
+  searchTerm: string|null = null
+  selected: any[] = []
   loading = false
+  searching = false
   pagination = {
     descending: true,
     page: 1,
     rowsPerPage: 50,
     sortBy: null,
-    // totalItems: number
+    totalItems: 0
   }
   headers = [
     { text: 'Hauptlemma', value: 'Hauptlemma' },
@@ -54,12 +83,58 @@ export default class Database extends Vue {
     { text: 'Kontext', value: 'Kontext' },
     { text: 'FB-Nr.', value: 'Fragebogennummer' },
   ]
+
+  debouncedSearchDatabase = _.debounce(this.searchDatabase, 250)
+
   async mounted() {
+    this.init()
+  }
+
+  async init() {
     this.loading = true
-    this.items = (await getDocuments()).map(x => x._source)
+    const res = await getDocuments(
+      this.pagination.page,
+      this.pagination.rowsPerPage,
+      // this.pagination.descending,
+      // this.pagination.sortBy
+    )
+    this.items = res.documents
+    this.pagination.totalItems = res.total
     this.loading = false
+  }
+
+  @Watch('pagination', {deep: true})
+  updateResults() {
+    if (this.searchTerm !== null) {
+      this.searchDatabase(this.searchTerm)
+    } else {
+      this.init()
+    }
+  }
+
+  async searchDatabase(search: string) {
+    if (search) {
+      this.searching = true
+      const res = await searchDocuments(
+        search,
+        this.pagination.page,
+        this.pagination.rowsPerPage,
+        this.pagination.descending,
+        this.pagination.sortBy
+      )
+      this.items = res.documents
+      this.pagination.totalItems = res.total
+      this.searching = false
+    } else {
+      this.init()
+    }
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+div.v-datatable.v-table.v-datatable--select-all.theme--light{
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 0;
+}
 </style>
