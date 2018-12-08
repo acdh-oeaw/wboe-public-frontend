@@ -271,10 +271,10 @@ export default class Maps extends Vue {
 
   get locationsSearchItems() {
     if (!this.isLoading) {
-      return this.allFeatures.map(f => {
+      return this.geoStore.ortsliste.map((f: any) => {
         return {
-          text: f.properties.name,
-          value: (f.properties as any).sigle
+          text: (f.parentsObj ? f.parentsObj.slice().reverse().map((f: any) => { return f.name }).join(', ') + ' - ' : '') + f.name,
+          value: f.sigle
         }
       })
     } else {
@@ -325,7 +325,8 @@ export default class Maps extends Vue {
     if (
       this.geoStore.gemeinden !== null &&
       this.geoStore.grossregionen !== null &&
-      this.geoStore.bundeslaender !== null
+      this.geoStore.bundeslaender !== null &&
+      this.geoStore.ortsliste !== null
     ) {
       return false
     } else {
