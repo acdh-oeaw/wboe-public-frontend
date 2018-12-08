@@ -47,7 +47,12 @@
         <article-fragment ext-info-url="wboe-artikel/wortbildung/" info-url="wboe-artikel/wortbildung-short/" :content="wortbildungXML" title="Wortbildung" />
         <article-fragment ext-info-url="wboe-artikel/redewendungen/" info-url="wboe-artikel/redewendungen-short/" :content="redewendungenXML" title="Redewendungen" />
       </v-expansion-panel>
-      <div class="text-xs-right pa-4" :title="editor.fullname">{{ editor.initials ? editor.initials : editor.fullname }}</div>
+      <div class="text-xs-right pa-4">
+        <v-tooltip top color="ci">
+          <span slot="activator">{{ editor.initials ? editor.initials : editor.fullname }}</span>
+          <span>{{ editor.fullname }}</span>
+        </v-tooltip>
+      </div>
     </v-flex>
   </v-layout>
 </template>
