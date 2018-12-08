@@ -260,7 +260,7 @@ export default class Maps extends Vue {
 
   get locationsSearchItems() {
     if (!this.isLoading) {
-      return this.geoStore.ortsliste.map((f: any) => {
+      return this.geoStore.ortslisteGeo.map((f: any) => {
         return {
           text: (f.parentsObj ? f.parentsObj.slice().reverse().map((f: any) => { return f.name }).join(', ') + ' - ' : '') + f.name,
           value: f.sigle
