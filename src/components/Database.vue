@@ -28,7 +28,7 @@
         :items="items">
         <v-flex slot="actions-prepend">
           <v-tooltip color="ci" top :disabled="mappableSelectionItems.length > 0">
-            <v-menu top offset-y slot="activator" open-on-hover :disabled="mappableSelectionItems.length === 0" >
+            <v-menu :nudge-top="4" top offset-y slot="activator" open-on-hover :disabled="mappableSelectionItems.length === 0" >
               <v-btn
                 @click="showSelectionOnMap"
                 slot="activator"
@@ -48,7 +48,7 @@
           </v-tooltip>
           <v-menu top open-on-hover>
             <v-btn slot="activator" :disabled="items.length === 0" small flat class="pl-3 pr-3" round color="ci">
-              Export {{ this.selected.length > 0 ? `(${this.selected.length})` : ''}}
+              Export {{ selected.length > 0 ? `(${this.selected.length})` : ''}}
             </v-btn>
             <v-list class="context-menu-list" dense>
               <v-subheader>
@@ -57,6 +57,8 @@
               <v-list-tile @click="saveXLSX">Microsoft Excel</v-list-tile>
               <v-list-tile @click="saveJSON">JSON</v-list-tile>
               <v-list-tile @click="saveCSV">CSV</v-list-tile>
+              <v-divider />
+              <v-list-tile :disabled="selected.length === 0" @click="selected = []">Auswahl leeren</v-list-tile>
             </v-list>
           </v-menu>
         </v-flex>
@@ -64,7 +66,7 @@
           <td>
             <v-checkbox v-model="props.selected" hide-details />
           </td>
-          <td class="line-clamp" v-for="(header, i) in headers" :key="i">
+          <td @click="props.selected = !props.selected" class="line-clamp" v-for="(header, i) in headers" :key="i">
             {{ props.item[header.value] }}
           </td>
         </template>
@@ -77,7 +79,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-import { getDocuments, searchDocuments, getDocumentTotalCount } from '../api'
+import { getDocuments, searchDocuments, getDocumentTotalCount, getDocumentsByCollection } from '../api'
 import { geoStore } from '../store/geo'
 import * as FileSaver from 'file-saver'
 import * as xlsx from 'xlsx'
@@ -91,6 +93,9 @@ interface Places {
 
 @Component
 export default class Database extends Vue {
+
+  @Prop() collection_ids: string|null
+
   geoStore = geoStore
   items: any[] = []
   searchTerm: string|null = null
@@ -119,7 +124,19 @@ export default class Database extends Vue {
   debouncedSearchDatabase = _.debounce(this.searchDatabase, 250)
 
   async mounted() {
-    this.init()
+    if (this.collection_ids) {
+      this.loadCollectionIds(this.collectionIdList)
+    } else {
+      this.init()
+    }
+  }
+
+  get collectionIdList() {
+    if (this.collection_ids) {
+      return this.collection_ids.split(',')
+    } else {
+      return []
+    }
   }
 
   getPlacesFromSigle(sigle: string): Places {
@@ -158,6 +175,16 @@ export default class Database extends Vue {
     this.loading = false
   }
 
+  @Watch('collectionIdList')
+  async loadCollectionIds(ids: string[]) {
+    const res = await getDocumentsByCollection(ids[0])
+    this.items = res.documents.map(d => ({
+      ...d,
+      ...this.getPlacesFromSigle(d.ortsSigle)
+    }))
+    this.pagination.totalItems = res.total
+  }
+
   @Watch('pagination', {deep: true})
   updateResults(newVal: any, oldVal: any) {
     if (newVal.page !== oldVal.page) {
@@ -165,20 +192,28 @@ export default class Database extends Vue {
     }
     if (this.searchTerm !== null) {
       this.searchDatabase(this.searchTerm)
+    } else if (this.collection_ids) {
+      this.loadCollectionIds(this.collectionIdList)
     } else {
       this.init()
     }
   }
 
   get mappableSelectionItems() {
-    return this.selected.filter(i => {
-      return i.Bundesland !== '' || i.Großregion !== '' || i.Ort !== ''
-    })
+    return _(this.selected)
+      .filter(i => i.Bundesland !== '' || i.Großregion !== '' || i.Ort !== '')
+      .uniqBy(i => i.ortsSigle)
+      .value()
   }
 
   showSelectionOnMap() {
     if (this.selected.length > 0) {
-      this.$router.push({ path: '/maps', query: { loc: this.mappableSelectionItems.map(d => d.ortsSigle).join(',') } })
+      this.$router.push({
+        path: '/maps',
+        query: {
+          loc: this.mappableSelectionItems.map(d => d.ortsSigle).join(',')
+        }
+      })
     }
   }
 

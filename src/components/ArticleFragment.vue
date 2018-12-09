@@ -8,13 +8,13 @@
         <v-menu open-on-hover v-if="infoUrl" max-width="400" max-height="95vh" top left>
           <v-icon class="mr-3" slot="activator">info_outline</v-icon>
           <info-text class="elevation-24 pa-4 white" :path="infoUrl" />
-          <v-btn @click="showDetais = true" block color="ci" class="ma-0" dark v-if="extInfoUrl">Weitere Informationen</v-btn>
+          <v-btn @click="showDetails = true" block color="ci" class="ma-0" dark v-if="extInfoUrl">Weitere Informationen</v-btn>
         </v-menu>
       </v-flex>
-      <v-dialog v-model="showDetais" max-width="1000" color="#2b2735" scrollable v-if="extInfoUrl">
+      <v-dialog v-model="showDetails" max-width="1000" color="#2b2735" scrollable v-if="extInfoUrl">
         <v-card flat class="fill-height pa-4">
           <div class="close-btn">
-            <v-btn @click="showDetais = false" flat icon><v-icon dark>close</v-icon></v-btn>
+            <v-btn @click="showDetails = false" flat icon><v-icon dark>close</v-icon></v-btn>
           </div>
           <v-card-text class="pa-0 fill-height">
             <info-text class="pa-4 white fill-height" :path="extInfoUrl" />
@@ -43,7 +43,7 @@ export default class ArticleFragment extends Vue {
   @Prop({ default: null }) extInfoUrl: string|null
   @Prop({ default: null }) title: string|null
 
-  showDetais: Boolean = false
+  showDetails = false
 
   isEmptyXML(xml: string): boolean {
     const d = document.createElement('div')
@@ -59,6 +59,10 @@ export default class ArticleFragment extends Vue {
 }
 .article-xml {
   font-size: 115%;
+  [collection-href] {
+    cursor: pointer;
+    border-bottom: 1px solid rgba(0,0,0,.2)
+  }
   form {
     display: inline-block;
   }
@@ -178,23 +182,6 @@ export default class ArticleFragment extends Vue {
     form:not(:last-child)::after{
       content: ',';
       margin-left: -.25em;
-    }
-  }
-  &.wortbildung, &.redewendungen{
-    re{
-      sense{
-        display: inline;
-        sense {
-          margin-left: 0;
-          sense {
-            margin-left: 0;
-          }
-        }
-      }
-    }
-    form{
-      font-style: italic;
-      margin-right: .5em;
     }
   }
   cit{

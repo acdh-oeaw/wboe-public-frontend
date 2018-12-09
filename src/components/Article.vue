@@ -13,14 +13,14 @@
         prepend-inner-icon="search"
       />
       <v-layout align-baseline>
-        <v-flex class="article-xml mb-3" v-html="metaXML" xs12 />
+        <v-flex @click="handleArticleClick" class="article-xml mb-3" v-html="metaXML" xs12 />
         <v-flex>
           <v-btn small round flat @click="toggleAll">
             {{ isEveryArticleExpanded ? 'Einklappen' : 'Ausklappen'}}
           </v-btn>
         </v-flex>
         <v-flex class="text-xs-right">
-          <v-dialog v-model="showEditor" max-width="1000" content-class="fill-height" color="#2b2735" scrollable>
+          <v-dialog transition="none" v-model="showEditor" max-width="1000" content-class="fill-height" color="#2b2735" scrollable>
             <v-btn small round flat slot="activator">XML/TEI</v-btn>
             <v-card color="#342f40" dark flat class="fill-height">
               <v-card-title class="pt-1 pb-1">
@@ -33,7 +33,7 @@
                 </v-flex>
               </v-card-title>
               <v-card-text class="pa-0 fill-height">
-                <xml-editor :show="showEditor" class="fill-height" v-model="articleXML" />
+                <xml-editor v-if="showEditor" :show="showEditor" class="fill-height" v-model="articleXML" />
               </v-card-text>
             </v-card>
           </v-dialog>
@@ -45,7 +45,13 @@
         <article-fragment ext-info-url="wboe-artikel/etymologie/" info-url="wboe-artikel/etymologie-short/" :content="etymologieXML" title="Etymologie" />
         <article-fragment ext-info-url="wboe-artikel/bedeutung/" info-url="wboe-artikel/bedeutung-short/" :content="bedeutungXML" title="Bedeutung" />
         <article-fragment ext-info-url="wboe-artikel/wortbildung/" info-url="wboe-artikel/wortbildung-short/" :content="wortbildungXML" title="Wortbildung" />
-        <article-fragment ext-info-url="wboe-artikel/redewendungen/" info-url="wboe-artikel/redewendungen-short/" :content="redewendungenXML" title="Redewendungen" />
+        <article-fragment
+          ext-info-url="wboe-artikel/redewendungen/"
+          info-url="wboe-artikel/redewendungen-short/"
+          :content="redewendungenXML"
+          title="Redewendungen"
+          class="redewendungen"
+        />
       </v-expansion-panel>
       <div class="text-xs-right pa-4">
         <v-tooltip top color="ci">
@@ -82,7 +88,10 @@ export default class Article extends Vue {
   articles: Array<{text: string, value: string}> = []
   geoStore = geoStore
   loading = false
-  editor: Object = {'initials': '', 'fullname': ''}
+  editor = {
+    initials: '',
+    fullname: ''
+  }
   expanded = [
     false,
     false,
@@ -115,7 +124,7 @@ export default class Article extends Vue {
   }
 
   isPlaceNameElement(el: HTMLElement|any) {
-    return el.nodeName === 'PLACENAME' && el.getAttribute('ref') !== null
+    return el.nodeName === 'PLACENAME' && el.hasAttribute('ref')
   }
 
   getPlacenameSigleFromRef(ref: string|null): string|null {
@@ -126,12 +135,19 @@ export default class Article extends Vue {
     }
   }
 
+  getCollectionLink(el: HTMLElement|any): string|null {
+    return el.getAttribute('collection-href') || el.parentElement.getAttribute('collection-href')
+  }
+
   handleArticleClick(e: MouseEvent) {
     if (this.isPlaceNameElement(e.target)) {
       const sigle = this.getPlacenameSigleFromRef((e.target as HTMLElement).getAttribute('ref'))
       if (sigle !== null) {
         this.openMapsWithPlaces([ sigle ])
       }
+    } else if (this.getCollectionLink(e.target) !== null) {
+      const id = this.getCollectionLink(e.target)!
+      this.$router.push({ path: '/db', query: { collection_ids: id } })
     }
   }
 
@@ -198,6 +214,21 @@ export default class Article extends Vue {
     this.initArticle(this.filename)
   }
 
+  linkParentsToCollection(selector: string, xml: string) {
+    const parser = new DOMParser()
+    const xmlDoc = parser.parseFromString(xml, 'text/xml')
+    Array.from(xmlDoc.querySelectorAll(selector)).forEach((v, i) => {
+      const p = v.parentElement
+      const href = v.getAttribute('target') ? _.last(v.getAttribute('target')!.split('#c')) : null
+      if (p !== null && p.firstElementChild !== null && href !== null && href !== undefined) {
+        p.firstElementChild.setAttribute('collection-href', href)
+      }
+      v.remove()
+    })
+    const s = new XMLSerializer()
+    return s.serializeToString(xmlDoc)
+  }
+
   appendGrossregionViaRef(selector: string, xml: string) {
     const parser = new DOMParser()
     const xmlDoc = parser.parseFromString(xml, 'text/xml')
@@ -218,8 +249,10 @@ export default class Article extends Vue {
 
   initXML(xml: string) {
     xml = xml.split('<body>').join('').split('</body>').join('')
+    xml = this.linkParentsToCollection('ptr[type=collection]', xml)
     xml = this.appendGrossregionViaRef('form[type=dialect] placeName[type=gemeinde], cit placeName[type=gemeinde]', xml)
     this.metaXML = this.fragementFromSelector('entry > form[type=lemma], entry > form[subtype=diminutive], entry > gramGrp', xml)
+    console.log({meta: this.metaXML})
     this.bedeutungXML = this.fragementFromSelector('entry > sense', xml)
     this.verbreitungXML = this.fragementFromSelector('entry > usg[type=geo]', xml)
     this.belegauswahlXML = this.fragementFromSelector('entry > form[type=dialect]:not([subtype])', xml)
@@ -227,12 +260,12 @@ export default class Article extends Vue {
     this.wortbildungXML = this.fragementFromSelector('entry > re', xml, '[subtype=compound]')
     this.redewendungenXML = this.fragementFromSelector('entry > re', xml, '[subtype=MWE]')
     this.title = this.elementsFromDom('title', xml)[0].innerHTML
-    let aEditor = this.elementsFromDom('teiHeader > fileDesc > titleStmt > respStmt > name[ref]', xml)[0]
+    const aEditor = this.elementsFromDom('teiHeader > fileDesc > titleStmt > respStmt > name[ref]', xml)[0]
     let aInitials = aEditor.getAttribute('ref')
     aInitials = typeof aInitials === 'string' ? aInitials.substr(1) : ''
     this.editor = {
-      'initials': aInitials,
-      'fullname': aEditor.innerHTML
+      initials: aInitials,
+      fullname: aEditor.innerHTML
     }
   }
 
@@ -244,3 +277,24 @@ export default class Article extends Vue {
   }
 }
 </script>
+<style lang="scss">
+.wortbildung, .redewendungen{
+  re{
+    display: block;
+    margin-bottom: 1em;
+    sense{
+      display: inline;
+      sense {
+        margin-left: 0;
+        sense {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+  form{
+    font-style: italic;
+    margin-right: .5em;
+  }
+}
+</style>

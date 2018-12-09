@@ -53,7 +53,6 @@ export async function getDocumentTotalCount(): Promise<number> {
 }
 
 export async function getDocuments(page = 1, items = 100): Promise<Documents> {
-  console.log({page, items})
   const r = await (await fetch(apiEndpoint + '/documents/?page=' + page + '&page_size=' + items)).json()
   const ds = (await axios({
     method: 'POST',
@@ -140,19 +139,22 @@ export async function searchDocuments(
   }
 }
 
-export async function getDocumentsByCollection(id: number): Promise<Documents> {
-  const r = await (await fetch(apiEndpoint + '/documents/?in_collections=28')).json()
-  console.log(r)
-  const ds = await (await fetch(esEndpoint, {
-    body: JSON.stringify({
+export async function getDocumentsByCollection(id: string, page = 1, items = 100): Promise<Documents> {
+  const r = await (await fetch(apiEndpoint + `/documents/?in_collections=${ id }`)).json()
+  const ds = await (await axios({
+    url: localEndpoint + '/es-query',
+    method: 'POST',
+    data: {
+      from: (page - 1) * items,
+      size: items,
       query: {
         ids: {
           type : '_doc',
           values: r.results.map((result: any) => result.es_id)
         }
       }
-    })
-  })).json()
+    }
+  })).data
   return {
     documents: ds.hits.hits.map((h: any) => {
       return {

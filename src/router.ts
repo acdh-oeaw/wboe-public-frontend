@@ -40,11 +40,8 @@ const r = new Router({
     {
       path: '/db',
       component: Database,
-      children: [
-        {
-          path: ''
-        }
-      ]
+      // combine route params and query params into props
+      props: (route) => ({ ...route.params, ...route.query })
     }
   ]
 })
