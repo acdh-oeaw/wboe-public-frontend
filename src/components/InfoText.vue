@@ -4,7 +4,9 @@
   </div>
   <div v-else>
     <slot />
-    <div class="pa-2 grey--text text-xs-center" v-if="html === ''">Info-Text "{{ path }}" is empty</div>
+    <div class="pa-2 grey--text text-xs-center" v-if="html === ''">
+      <v-icon>code</v-icon> <br> "{{ path }}" is empty
+    </div>
     <div v-if="subHtml !== null">
       <div><v-btn @click="subHtml = null" flat small><v-icon small>arrow_back</v-icon> Zurück</v-btn></div>
       <div ref="infoContent" v-html="subHtml" />

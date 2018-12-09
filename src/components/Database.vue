@@ -28,22 +28,27 @@
         :items="items">
         <v-flex slot="actions-prepend">
           <v-tooltip color="ci" top :disabled="mappableSelectionItems.length > 0">
-            <v-btn
-              @click="showSelectionOnMap"
-              slot="activator"
-              :disabled="mappableSelectionItems.length === 0"
-              small
-              flat
-              class="pl-3 pr-3"
-              round
-              color="ci">
-              auf Karte zeigen ({{ mappableSelectionItems.length }})
-            </v-btn>
+            <v-menu top offset-y slot="activator" open-on-hover :disabled="mappableSelectionItems.length === 0" >
+              <v-btn
+                @click="showSelectionOnMap"
+                slot="activator"
+                :disabled="mappableSelectionItems.length === 0"
+                small
+                flat
+                class="pl-3 pr-3"
+                round
+                color="ci">
+                auf Karte zeigen ({{ mappableSelectionItems.length }})
+              </v-btn>
+              <v-list dense>
+                <v-list-tile @click="selected = []">Auswahl leeren</v-list-tile>
+              </v-list>
+            </v-menu>
             <span>Wählen Sie zuvor Dokumente mit Ortsangaben aus</span>
           </v-tooltip>
           <v-menu top open-on-hover>
             <v-btn slot="activator" :disabled="items.length === 0" small flat class="pl-3 pr-3" round color="ci">
-              Export
+              Export {{ this.selected.length > 0 ? `(${this.selected.length})` : ''}}
             </v-btn>
             <v-list class="context-menu-list" dense>
               <v-subheader>
@@ -154,7 +159,10 @@ export default class Database extends Vue {
   }
 
   @Watch('pagination', {deep: true})
-  updateResults() {
+  updateResults(newVal: any, oldVal: any) {
+    if (newVal.page !== oldVal.page) {
+      window.scroll({ top: 0, behavior: 'smooth' })
+    }
     if (this.searchTerm !== null) {
       this.searchDatabase(this.searchTerm)
     } else {
@@ -196,7 +204,7 @@ export default class Database extends Vue {
   }
 
   saveXLSX() {
-    const x = xlsx.utils.json_to_sheet(this.items)
+    const x = xlsx.utils.json_to_sheet(this.selected || this.items)
     const y = xlsx.writeFile({
       Sheets: { sheet: x },
       SheetNames: [ 'sheet' ],
@@ -204,7 +212,7 @@ export default class Database extends Vue {
   }
 
   saveCSV() {
-    const x = xlsx.utils.json_to_sheet(this.items)
+    const x = xlsx.utils.json_to_sheet(this.selected || this.items)
     const y = xlsx.writeFile({
       Sheets: { sheet: x },
       SheetNames: [ 'sheet' ]
@@ -212,7 +220,7 @@ export default class Database extends Vue {
   }
 
   saveJSON() {
-    const blob = JSON.stringify(this.items, undefined, 2)
+    const blob = JSON.stringify(this.selected || this.items, undefined, 2)
     FileSaver.saveAs(new Blob([blob]), 'wboe-lioe-export.json')
   }
 
