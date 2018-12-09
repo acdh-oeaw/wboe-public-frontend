@@ -18,6 +18,7 @@ interface Documents {
     Wortart: string
     entry: any
     id: string
+    ortsSigle: string
   }>
 }
 
@@ -43,12 +44,20 @@ export function isExternUrl(url: string): boolean {
   return txtEndpoint !== url.substr(0, txtEndpoint.length)
 }
 
+export async function getDocumentTotalCount(): Promise<number> {
+  const r = await (await axios({
+    method: 'GET',
+    url: apiEndpoint + '/documents/?page=1&page_size=1'
+  })).data
+  return r.count
+}
+
 export async function getDocuments(page = 1, items = 100): Promise<Documents> {
+  console.log({page, items})
   const r = await (await fetch(apiEndpoint + '/documents/?page=' + page + '&page_size=' + items)).json()
   const ds = (await axios({
     method: 'POST',
     data: {
-      from: (page - 1) * items,
       size: items,
       query: {
         ids: {
@@ -59,10 +68,28 @@ export async function getDocuments(page = 1, items = 100): Promise<Documents> {
     },
     url: localEndpoint + '/es-query'
   })).data
-  console.log(ds.hits.hits)
+  // console.log(ds.hits.hits)
   return {
-    documents: ds.hits.hits.map((h: any) => ({ ...h._source, id: h._id})),
+    documents: ds.hits.hits.map((h: any) => {
+      return {
+        ...h._source,
+        id: h._id,
+        ortsSigle: sigleFromEsRef(h._source.entry.ref)
+      }
+    }),
     total: ds.hits.total
+  }
+}
+
+function sigleFromEsRef(ref: Array<{$: string, '@type': string}>): string|null {
+  const q = ref.find(r => r['@type'] === 'quelleBearbeitet')
+  if (q) {
+    const m = q.$.match(/\{(.*)\}/)
+    return m !== null
+      ? m[0].replace('{', '').replace('}', '')
+      : null
+  } else {
+    return null
   }
 }
 
@@ -102,7 +129,13 @@ export async function searchDocuments(
     }
   })).data
   return {
-    documents: ds.hits.hits.map((h: any) => ({ ...h._source, id: h._id})),
+    documents: ds.hits.hits.map((h: any) => {
+      return {
+        ...h._source,
+        id: h._id,
+        ortsSigle: sigleFromEsRef(h._source.entry.ref)
+      }
+    }),
     total: ds.hits.total
   }
 }
@@ -121,7 +154,13 @@ export async function getDocumentsByCollection(id: number): Promise<Documents> {
     })
   })).json()
   return {
-    documents: ds.hits.hits.map((h: any) => h._source),
+    documents: ds.hits.hits.map((h: any) => {
+      return {
+        ...h._source,
+        id: h._id,
+        ortsSigle: sigleFromEsRef(h._source.entry.ref)
+      }
+    }),
     total: ds.hits.total
   }
 }

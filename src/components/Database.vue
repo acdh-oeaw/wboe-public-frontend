@@ -50,6 +50,7 @@
               </v-subheader>
               <v-list-tile @click="saveXLSX">Microsoft Excel</v-list-tile>
               <v-list-tile @click="saveJSON">JSON</v-list-tile>
+              <v-list-tile @click="saveCSV">CSV</v-list-tile>
             </v-list>
           </v-menu>
         </v-flex>
@@ -70,13 +71,21 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-import { getDocuments, searchDocuments } from '../api'
+import { getDocuments, searchDocuments, getDocumentTotalCount } from '../api'
+import { geoStore } from '../store/geo'
 import * as FileSaver from 'file-saver'
 import * as xlsx from 'xlsx'
 import * as _ from 'lodash'
 
+interface Places {
+  Ort: string
+  Bundesland: string
+  Großregion: string
+}
+
 @Component
 export default class Database extends Vue {
+  geoStore = geoStore
   items: any[] = []
   searchTerm: string|null = null
   selected: any[] = []
@@ -96,6 +105,9 @@ export default class Database extends Vue {
     { text: 'Bedeutung', value: 'Bedeutung' },
     { text: 'Kontext', value: 'Kontext' },
     { text: 'FB-Nr.', value: 'Fragebogennummer' },
+    { text: 'Ort', value: 'Ort', sortable: false },
+    { text: 'Großreg.', value: 'Großregion', sortable: false },
+    { text: 'Bundesl.', value: 'Bundesland', sortable: false }
   ]
 
   debouncedSearchDatabase = _.debounce(this.searchDatabase, 250)
@@ -104,16 +116,39 @@ export default class Database extends Vue {
     this.init()
   }
 
+  getPlacesFromSigle(sigle: string): Places {
+    const place = _(geoStore.ortsliste).find(o => o.sigle === sigle)
+    if (place === undefined) {
+      return {
+        Ort: '',
+        Großregion: '',
+        Bundesland: ''
+      }
+    } else {
+      const bl = _(place.parentsObj).find(o => o.field === 'Bundesland')
+      const gr = _(place.parentsObj).find(o => o.field === 'Großregion')
+      return {
+        Ort: place.name,
+        Großregion: gr ? gr.name : '',
+        Bundesland: bl ? bl.name : '',
+        [ place.field ]: place.name,
+      }
+    }
+  }
+
   async init() {
     this.loading = true
+    this.pagination.totalItems = await getDocumentTotalCount()
     const res = await getDocuments(
       this.pagination.page,
       this.pagination.rowsPerPage,
       // this.pagination.descending,
       // this.pagination.sortBy
     )
-    this.items = res.documents
-    this.pagination.totalItems = res.total
+    this.items = res.documents.map(d => ({
+      ...d,
+      ...this.getPlacesFromSigle(d.ortsSigle)
+    }))
     this.loading = false
   }
 
@@ -136,7 +171,10 @@ export default class Database extends Vue {
         this.pagination.descending,
         this.pagination.sortBy
       )
-      this.items = res.documents
+      this.items = res.documents.map(d => ({
+        ...d,
+        ...this.getPlacesFromSigle(d.ortsSigle)
+      }))
       this.pagination.totalItems = res.total
       this.searching = false
     } else {
@@ -148,13 +186,21 @@ export default class Database extends Vue {
     const x = xlsx.utils.json_to_sheet(this.items)
     const y = xlsx.writeFile({
       Sheets: { sheet: x },
-      SheetNames: ['sheet'],
-    }, 'text.xlsx')
+      SheetNames: [ 'sheet' ],
+    }, 'wboe-lioe-export.xlsx')
+  }
+
+  saveCSV() {
+    const x = xlsx.utils.json_to_sheet(this.items)
+    const y = xlsx.writeFile({
+      Sheets: { sheet: x },
+      SheetNames: [ 'sheet' ]
+    }, 'wboe-lioe-export.csv')
   }
 
   saveJSON() {
     const blob = JSON.stringify(this.items, undefined, 2)
-    FileSaver.saveAs(new Blob([blob]), 'lioe-database.json')
+    FileSaver.saveAs(new Blob([blob]), 'wboe-lioe-export.json')
   }
 
 }
