@@ -15,7 +15,8 @@ Vue.use(VueRouter)
 Vue.use(Vuetify, {
   theme: {
     ci: '#3B89A0',
-    primary: '#3B89A0'
+    primary: '#3B89A0',
+    accent: '#88DBDF'
   }
 })
 Vue.use(VueLazyload, { lazyComponent : true })
