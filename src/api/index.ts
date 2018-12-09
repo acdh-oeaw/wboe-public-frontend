@@ -1,4 +1,5 @@
 import axios from 'axios'
+import * as _ from 'lodash'
 
 declare var process: {
   env: {
@@ -90,6 +91,18 @@ function sigleFromEsRef(ref: Array<{$: string, '@type': string}>): string|null {
   } else {
     return null
   }
+}
+
+// tslint:disable-next-line:max-line-length
+export async function searchCollections(val: string): Promise<Array<{ name: string, value: string, description: string }>> {
+  const res = await (await fetch(apiEndpoint + '/collections/?page=1&page_size=10&title=' + val)).json()
+  return res.results.map((r: any) => {
+    return {
+      name: r.title,
+      value: _.last(r.url.match(/(\d){1,}/)),
+      description: r.description
+    }
+  })
 }
 
 export async function searchDocuments(

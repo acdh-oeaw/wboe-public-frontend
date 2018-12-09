@@ -14,7 +14,8 @@ Vue.use(Vuex)
 Vue.use(VueRouter)
 Vue.use(Vuetify, {
   theme: {
-    ci: '#003263'
+    ci: '#3B89A0',
+    primary: '#3B89A0'
   }
 })
 Vue.use(VueLazyload, { lazyComponent : true })

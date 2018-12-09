@@ -66,4 +66,7 @@ export default class InfoText extends Vue {
   div /deep/ .frame > p:last-child {
     margin-bottom: 0;
   }
+  a{
+    text-decoration: none;
+  }
 </style>

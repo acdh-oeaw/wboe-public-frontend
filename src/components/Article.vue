@@ -28,7 +28,7 @@
                   {{ filename }}
                 </v-flex>
                 <v-flex class="text-xs-right">
-                  <v-btn small round flat @click="downloadEditorXML">download</v-btn>
+                  <v-btn class="pl-3 pr-3" small round flat @click="downloadEditorXML">download</v-btn>
                   <v-btn small round flat @click="saveEditorXML">view</v-btn>
                 </v-flex>
               </v-card-title>

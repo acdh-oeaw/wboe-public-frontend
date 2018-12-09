@@ -12,10 +12,7 @@
         clearable
       />
     </v-flex>
-    <v-flex>
-      <info-text path="lioe-start/einleitungstext/" />
-    </v-flex>
-    <v-flex xs12>
+    <v-flex style="min-height: 400px" xs12>
       <!-- <v-progress-linear
         height="1"
         class="pa-0 ma-0 absolute"
@@ -38,6 +35,9 @@
         </router-link>
       </template>
       </vue-word-cloud>
+    </v-flex>
+    <v-flex class="pt-4 pl-5 pr-5">
+      <info-text path="lioe-start/einleitungstext/" />
     </v-flex>
   </v-layout>
 </template>
@@ -110,7 +110,7 @@ export default class Main extends Vue {
 <style lang="scss" scoped>
 .word-cloud-link{
   opacity: .6;
-  color: #285495;
+  color: #3B89A0;
   text-decoration: none;
   &:hover{
     opacity: 1;

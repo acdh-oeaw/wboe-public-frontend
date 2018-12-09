@@ -1,17 +1,69 @@
 <template>
   <v-layout column>
     <v-flex>
-      <v-text-field
-        autofocus
-        flat
-        label="Datenbank durchsuchen…"
-        prepend-inner-icon="search"
-        v-model="searchTerm"
-        @input="debouncedSearchDatabase"
-        :loading="searching"
-        solo
-        clearable
-      />
+      <v-card class="elevation-0">
+        <v-layout class="mb-2">
+          <v-flex xs12>
+            <v-text-field
+              v-if="searchItemType === 'fulltext'"
+              autofocus
+              flat
+              label="Datenbank durchsuchen…"
+              prepend-inner-icon="search"
+              v-model="searchTerm"
+              @input="debouncedSearchDatabase"
+              :loading="searching"
+              hide-details
+              solo
+              clearable
+            />
+            <v-autocomplete
+              v-if="searchItemType === 'collection'"
+              autofocus
+              flat
+              label="Sammlungen suchen…"
+              :search-input.sync="searchCollection"
+              prepend-inner-icon="search"
+              :loading="searching"
+              :items="selectedCollections.concat(collectionSearchItems)"
+              v-model="selectedCollections"
+              return-object
+              hide-details
+              dense
+              multiple
+              solo
+              clearable>
+              <template
+                slot="item"
+                slot-scope="data">
+                <v-list-tile-action>
+                  <v-checkbox v-model="data.tile.props.value"></v-checkbox>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                  <v-list-tile-title style="height: 19px;">{{ data.item.text }}</v-list-tile-title>
+                  <v-list-tile-sub-title style="font-size: 85%;">{{ data.item.description }}</v-list-tile-sub-title>
+                </v-list-tile-content>
+              </template>
+            </v-autocomplete>
+          </v-flex>
+          <v-flex align-content-center fill-height>
+            <div>
+              <v-select
+                dense
+                flat
+                solo
+                hide-details
+                v-model="searchItemType"
+                :items="[{text: 'Volltext', value: 'fulltext'}, { text: 'Sammlung', value: 'collection' }]" />
+            </div>
+          </v-flex>
+        </v-layout>
+      </v-card>
+      <div v-if="collectionIdList.length > 0">
+        <v-chip close @input="hideCollection(collection)" :key="collection" v-for="collection in collectionIdList">
+          {{ collection }}
+        </v-chip>
+      </div>
     </v-flex>
     <v-flex>
       <v-data-table
@@ -79,7 +131,12 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-import { getDocuments, searchDocuments, getDocumentTotalCount, getDocumentsByCollection } from '../api'
+import {
+  getDocuments,
+  searchDocuments,
+  getDocumentTotalCount,
+  getDocumentsByCollection,
+  searchCollections } from '../api'
 import { geoStore } from '../store/geo'
 import * as FileSaver from 'file-saver'
 import * as xlsx from 'xlsx'
@@ -99,6 +156,10 @@ export default class Database extends Vue {
   geoStore = geoStore
   items: any[] = []
   searchTerm: string|null = null
+  searchItemType = 'fulltext'
+  searchCollection: string|null = null
+  collectionSearchItems: any[] = []
+  selectedCollections: any[] = []
   selected: any[] = []
   loading = false
   searching = false
@@ -127,6 +188,25 @@ export default class Database extends Vue {
     if (this.collection_ids) {
       this.loadCollectionIds(this.collectionIdList)
     } else {
+      this.init()
+    }
+  }
+
+  @Watch('searchCollection')
+  async onSearchCollection(val: string|null) {
+    if (val !== null && val.trim() !== '') {
+      console.log(this.selectedCollections, this.collectionSearchItems)
+      this.collectionSearchItems = (await searchCollections(val)).map(x => ({ ...x, text: x.name }))
+    }
+  }
+
+  hideCollection(id: string) {
+    const newList = this.collectionIdList.filter(x => x !== id)
+    if (newList.length > 0) {
+      this.$router.push({ query: { collection_ids: newList.join(',') } })
+      this.loadCollectionIds(this.collectionIdList)
+    } else {
+      this.$router.replace({ query: {} })
       this.init()
     }
   }
@@ -177,12 +257,14 @@ export default class Database extends Vue {
 
   @Watch('collectionIdList')
   async loadCollectionIds(ids: string[]) {
-    const res = await getDocumentsByCollection(ids[0])
-    this.items = res.documents.map(d => ({
-      ...d,
-      ...this.getPlacesFromSigle(d.ortsSigle)
-    }))
-    this.pagination.totalItems = res.total
+    if (ids.length > 0) {
+      const res = await getDocumentsByCollection(ids[0])
+      this.items = res.documents.map(d => ({
+        ...d,
+        ...this.getPlacesFromSigle(d.ortsSigle)
+      }))
+      this.pagination.totalItems = res.total
+    }
   }
 
   @Watch('pagination', {deep: true})
