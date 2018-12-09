@@ -27,18 +27,19 @@
         item-key="id"
         :items="items">
         <v-flex slot="actions-prepend">
-          <v-tooltip color="ci" top :disabled="selected.length > 0">
+          <v-tooltip color="ci" top :disabled="mappableSelectionItems.length > 0">
             <v-btn
+              @click="showSelectionOnMap"
               slot="activator"
-              :disabled="selected.length === 0"
+              :disabled="mappableSelectionItems.length === 0"
               small
               flat
               class="pl-3 pr-3"
               round
               color="ci">
-              auf Karte zeigen ({{ selected.length }})
+              auf Karte zeigen ({{ mappableSelectionItems.length }})
             </v-btn>
-            <span>Wählen Sie zuvor Dokumente aus</span>
+            <span>Wählen Sie zuvor Dokumente mit Ortsangaben aus</span>
           </v-tooltip>
           <v-menu top open-on-hover>
             <v-btn slot="activator" :disabled="items.length === 0" small flat class="pl-3 pr-3" round color="ci">
@@ -158,6 +159,18 @@ export default class Database extends Vue {
       this.searchDatabase(this.searchTerm)
     } else {
       this.init()
+    }
+  }
+
+  get mappableSelectionItems() {
+    return this.selected.filter(i => {
+      return i.Bundesland !== '' || i.Großregion !== '' || i.Ort !== ''
+    })
+  }
+
+  showSelectionOnMap() {
+    if (this.selected.length > 0) {
+      this.$router.push({ path: '/maps', query: { loc: this.mappableSelectionItems.map(d => d.ortsSigle).join(',') } })
     }
   }
 
