@@ -28,7 +28,7 @@
                   {{ filename }}
                 </v-flex>
                 <v-flex class="text-xs-right">
-                  <v-btn small round flat>download</v-btn>
+                  <v-btn small round flat @click="downloadEditorXML">download</v-btn>
                   <v-btn small round flat @click="saveEditorXML">view</v-btn>
                 </v-flex>
               </v-card-title>
@@ -72,6 +72,7 @@ import { geoStore } from '../store/geo'
 import * as _ from 'lodash'
 import InfoText from '@components/InfoText.vue'
 import ArticleFragment from '@components/ArticleFragment.vue'
+import * as FileSaver from 'file-saver'
 
 @Component({
   components: {
@@ -202,6 +203,11 @@ export default class Article extends Vue {
   saveEditorXML() {
     this.showEditor = false
     this.initXML(this.articleXML!)
+  }
+
+  downloadEditorXML() {
+    const blob = this.articleXML
+    FileSaver.saveAs(new Blob([blob]), this.filename + '.xml')
   }
 
   async mounted() {
