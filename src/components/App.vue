@@ -52,6 +52,9 @@
               <a target="_blank" href="https://acdh.oeaw.ac.at">
                 <v-img aspect-ratio="1" width="150" max-height="70" contain src="https://vawadioe.acdh.oeaw.ac.at/fileadmin/bilder/acdh_logo120h.png" alt="" class="src" />
               </a>
+              <a target="_blank" href="https://www.oeaw.ac.at/acdh/projects/wboe/">
+                <v-img aspect-ratio="1" width="150" max-height="70" contain src="https://vawadioe.acdh.oeaw.ac.at/fileadmin/bilder/wboelogo_230px_transp.png" alt="" class="src" />
+              </a>
             </v-layout>
           </v-flex>
         </v-layout>
