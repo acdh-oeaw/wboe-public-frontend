@@ -57,3 +57,12 @@ img[lazy=loaded] {
 .bold{
   font-weight: bold;
 }
+.divider-left::before{
+  content: ' ';
+  width: 1px;
+  background: rgba(0,0,0,.1);
+  height: 60%;
+  position: absolute;
+  z-index: 1;
+  top: 20%;
+}

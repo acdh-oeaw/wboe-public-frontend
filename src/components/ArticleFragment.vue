@@ -2,7 +2,7 @@
   <v-expansion-panel-content v-show="!isEmptyXML(content)">
     <v-layout slot="header">
       <v-flex xs12>
-        {{ title }}
+        <b>{{ title }}</b>
       </v-flex>
       <v-flex>
         <v-menu open-on-hover v-if="infoUrl" max-width="400" max-height="95vh" top left>

@@ -53,6 +53,7 @@
           <v-flex align-content-center fill-height>
             <div>
               <v-select
+                class="divider-left"
                 dense
                 flat
                 solo
@@ -60,6 +61,18 @@
                 v-model="searchItemType"
                 :items="[{text: 'Volltext', value: 'fulltext'}, { text: 'Sammlung', value: 'collection' }]" />
             </div>
+          </v-flex>
+          <v-flex>
+            <v-dialog slot="activator" max-width="1000" color="#2b2735" scrollable>
+              <v-btn slot="activator" color="accent" icon flat>
+                <v-icon>info</v-icon>
+              </v-btn>
+              <v-card flat class="fill-height pa-4">
+                <v-card-text class="pa-0 fill-height">
+                  <info-text class="pt-4 white fill-height" path="wboe-db/suchmoeglichkeiten-in-der-wboe-db/" />
+                </v-card-text>
+              </v-card>
+            </v-dialog>
           </v-flex>
         </v-layout>
       </v-card>
@@ -130,6 +143,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import InfoText from '@components/InfoText'
 import {
   getDocuments,
   searchDocuments,
@@ -148,7 +162,11 @@ interface Places {
   Großregion: string
 }
 
-@Component
+@Component({
+  components: {
+    InfoText
+  }
+})
 export default class Database extends Vue {
 
   @Prop() collection_ids: string|null

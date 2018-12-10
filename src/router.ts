@@ -5,6 +5,7 @@ import NotFound from '@components/NotFound.vue'
 import Articles from '@components/Articles.vue'
 import Article from '@components/Article.vue'
 import Database from '@components/Database.vue'
+import Resources from '@components/Resources.vue'
 
 const r = new Router({
   mode : 'history',
@@ -30,19 +31,20 @@ const r = new Router({
       props: (route) => ({ ...route.params, ...route.query })
     },
     {
-      path: '/maps/:collectionId',
-      component: Maps,
-      props: true
-    },
-    {
-      path: '*',
-      component: NotFound
+      path: '/resources',
+      component: Resources,
+      // combine route params and query params into props
+      props: (route) => ({ ...route.params, ...route.query })
     },
     {
       path: '/db',
       component: Database,
       // combine route params and query params into props
       props: (route) => ({ ...route.params, ...route.query })
+    },
+    {
+      path: '*',
+      component: NotFound
     }
   ]
 })

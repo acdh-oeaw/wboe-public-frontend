@@ -42,15 +42,15 @@
           <v-flex class="pl-5 pr-5 xmt-5 pb-5 text-xs-center" v-if="$route.name !== 'maps'">
             <v-divider class="ma-5" />
             <h4 class="mb-2 mt-2 grey--text">Ein Projekt der</h4>
-            <v-layout align-center justify-space-around>
+            <v-layout align-center justify-space-around wrap>
               <a target="_blank" href="https://www.oeaw.ac.at">
                 <v-img aspect-ratio="1" width="150" max-height="70" contain src="https://vawadioe.acdh.oeaw.ac.at/fileadmin/bilder/oeaw_logo_446x192.png" alt="" class="src" />
               </a>
-              <a target="_blank" href="https://vawadioe.acdh.oeaw.ac.at">
-                <v-img aspect-ratio="1" width="150" max-height="125" contain src="/static/img/logo-vawadioe.png" alt="" class="src" />
-              </a>
               <a target="_blank" href="https://acdh.oeaw.ac.at">
                 <v-img aspect-ratio="1" width="150" max-height="70" contain src="https://vawadioe.acdh.oeaw.ac.at/fileadmin/bilder/acdh_logo120h.png" alt="" class="src" />
+              </a>
+              <a target="_blank" href="https://vawadioe.acdh.oeaw.ac.at">
+                <v-img aspect-ratio="1" width="150" max-height="125" contain src="/static/img/logo-vawadioe.png" alt="" class="src" />
               </a>
               <a target="_blank" href="https://www.oeaw.ac.at/acdh/projects/wboe/">
                 <v-img aspect-ratio="1" width="150" max-height="70" contain src="https://vawadioe.acdh.oeaw.ac.at/fileadmin/bilder/wboelogo_230px_transp.png" alt="" class="src" />

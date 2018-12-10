@@ -36,16 +36,25 @@
               flat
               solo
               hide-details
+              class="divider-left"
               v-model="searchItemType"
               :items="['Ort', 'Lemma']" />
           </v-flex>
           <v-flex>
-            <v-tooltip color="ci" dark top>
+            <v-tooltip color="secondary" dark top>
               <v-btn slot="activator" @click="autoFit = !autoFit" :color="autoFit ? 'primary' : 'grey'" icon flat>
                 <v-icon>my_location</v-icon>
               </v-btn>
               <span>Ausschnitt automatisch wählen</span>
             </v-tooltip>
+          </v-flex>
+          <v-flex>
+            <v-menu open-on-hover max-width="400" max-height="95vh" top left>
+              <v-btn slot="activator" color="accent" icon flat>
+                <v-icon>info</v-icon>
+              </v-btn>
+              <info-text class="elevation-24 pa-4 white" path="wboe-karten/infokasten-zur-den-karten/" />
+            </v-menu>
           </v-flex>
         </v-layout>
       </v-card>
@@ -127,6 +136,7 @@
 
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { LMap, LTileLayer, LMarker, LGeoJson, LIconDefault } from 'vue2-leaflet'
+import InfoText from '@components/InfoText.vue'
 import { geoStore } from '../store/geo'
 import * as FileSaver from 'file-saver'
 import domtoimage from 'dom-to-image'
@@ -136,10 +146,9 @@ import * as _ from 'lodash'
 const defaultCenter = [47.64318610543658, 13.53515625]
 const defaultZoom = 7
 
-import axios from 'axios'
-
 @Component({
   components: {
+    InfoText,
     LMap,
     LTileLayer,
     LGeoJson,
