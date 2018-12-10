@@ -86,6 +86,9 @@ export default class App extends Vue {
 html{
   font-size: 16px;
 }
+.application{
+  line-height: 1.6;
+}
 </style>
 
 <style lang="scss" scoped>
