@@ -24,6 +24,7 @@ const r = new Router({
     },
     {
       path: '/maps',
+      name: 'maps',
       component: Maps,
       // combine route params and query params into props
       props: (route) => ({ ...route.params, ...route.query })
