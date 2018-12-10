@@ -58,7 +58,7 @@ export default class ArticleFragment extends Vue {
   right: 0;
 }
 .article-xml {
-  font-size: 115%;
+  font-size: 100%;
   [collection-href] {
     cursor: pointer;
     border-bottom: 1px solid rgba(0,0,0,.2)

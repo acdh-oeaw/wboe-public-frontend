@@ -57,5 +57,8 @@ export default class  extends Vue {
   @import '../../node_modules/codemirror/theme/duotone-dark.css';
   @import '../../node_modules/codemirror/addon/hint/show-hint.css';
   @import '../../node_modules/codemirror/addon/dialog/dialog.css';
-  .CodeMirror { height: auto; }
+  .CodeMirror {
+    height: auto;
+    font-size: 12px;
+  }
 </style>
