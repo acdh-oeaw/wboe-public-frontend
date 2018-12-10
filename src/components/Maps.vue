@@ -85,10 +85,10 @@
             <v-icon class="mr-1" small>save_alt</v-icon> Export/Download
           </v-subheader>
           <v-list-tile @click="printMap('png')">
-            PNG (large)
+            PNG
           </v-list-tile>
           <v-list-tile disabled @click="printMap('svg')">
-            SVG (large)
+            SVG
           </v-list-tile>
           <v-list-tile @click="printMap('json')">
             GeoJSON
