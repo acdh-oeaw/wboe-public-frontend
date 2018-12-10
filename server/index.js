@@ -71,7 +71,7 @@ app.post('/es-query', async (req, res) => {
     res.send(r)
   } catch (e) {
     console.log(e.response.data)
-    res.send(e)
+    res.send(500, e.response.data)
   }
 })
 
@@ -84,7 +84,7 @@ app.get('/es-count', async (req, res) => {
     res.send(r)
   } catch (e) {
     console.log(e)
-    res.send(e)
+    res.send(500, e.response.data)
   }
 })
 

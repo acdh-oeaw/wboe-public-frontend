@@ -86,10 +86,10 @@
                 slot="activator"
                 :disabled="mappableSelectionItems.length === 0"
                 small
-                flat
                 class="pl-3 pr-3"
                 round
-                color="ci">
+                depressed
+                color="primary">
                 auf Karte zeigen ({{ mappableSelectionItems.length }})
               </v-btn>
               <v-list dense>
