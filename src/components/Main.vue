@@ -37,7 +37,7 @@
       </vue-word-cloud>
     </v-flex>
     <v-flex class="pt-4 pl-5 pr-5">
-      <info-text path="lioe-start/einleitungstext/" />
+      <info-text subDialog="true" path="lioe-start/einleitungstext/" />
     </v-flex>
   </v-layout>
 </template>
