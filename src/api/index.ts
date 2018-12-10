@@ -82,12 +82,16 @@ export async function getDocuments(page = 1, items = 100): Promise<Documents> {
 }
 
 function sigleFromEsRef(ref: Array<{$: string, '@type': string}>): string|null {
-  const q = ref.find(r => r['@type'] === 'quelleBearbeitet')
-  if (q) {
-    const m = q.$.match(/\{(.*)\}/)
-    return m !== null
-      ? m[0].replace('{', '').replace('}', '')
-      : null
+  if (Array.isArray(ref)) {
+    const q = ref.find(r => r['@type'] === 'quelleBearbeitet')
+    if (q) {
+      const m = q.$.match(/\{(.*)\}/)
+      return m !== null
+        ? m[0].replace('{', '').replace('}', '')
+        : null
+    } else {
+      return null
+    }
   } else {
     return null
   }
@@ -99,10 +103,19 @@ export async function searchCollections(val: string): Promise<Array<{ name: stri
   return res.results.map((r: any) => {
     return {
       name: r.title,
-      value: _.last(r.url.match(/(\d){1,}/)),
+      value: _.last(r.url.match(/(\d+)/)),
       description: r.description
     }
   })
+}
+// tslint:disable-next-line:max-line-length
+export async function getCollectionByIds(ids: string[]): Promise<Array<{ name: string, value: string, description: string }>> {
+  const ress = await Promise.all(ids.map(async (id) => (await fetch(apiEndpoint + '/collections/' + id)).json()))
+  return ress.map((r: any) => ({
+    name: r.title,
+    value: _.last(r.url.match(/(\d+)/)) as string,
+    description: r.description
+  }))
 }
 
 export async function searchDocuments(
