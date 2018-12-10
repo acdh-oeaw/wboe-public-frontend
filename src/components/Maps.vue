@@ -87,7 +87,7 @@
           <v-list-tile @click="printMap('png')">
             PNG (large)
           </v-list-tile>
-          <v-list-tile @click="printMap('svg')">
+          <v-list-tile disabled @click="printMap('svg')">
             SVG (large)
           </v-list-tile>
           <v-list-tile @click="printMap('json')">
