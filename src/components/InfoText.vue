@@ -2,7 +2,7 @@
   <div class="pa-2 mb-2 grey--text text-xs-center" v-if="error">
     could not load {{ path }}.
   </div>
-  <div v-else>
+  <div class="info-text" v-else>
     <slot />
     <div class="pa-2 grey--text text-xs-center" v-if="html === ''">
       <v-icon>code</v-icon> <br> "{{ path }}" is empty
@@ -63,10 +63,15 @@ export default class InfoText extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-  div /deep/ .frame > p:last-child {
-    margin-bottom: 0;
-  }
-  a{
-    text-decoration: none;
-  }
+div /deep/ .frame > p:last-child {
+  margin-bottom: 0;
+}
+.info-text{
+  max-width: 60em;
+  margin-left: auto;
+  margin-right: auto;
+}
+div /deep/ a{
+  text-decoration: none;
+}
 </style>
