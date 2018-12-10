@@ -25,8 +25,12 @@
               :search-input.sync="searchCollection"
               prepend-inner-icon="search"
               :loading="searching"
-              :items="selectedCollections.concat(collectionSearchItems)"
-              v-model="selectedCollections"
+              :items="collectionSearchItems"
+              :value="selectedCollections"
+              @input="selectCollections"
+              chips
+              deletable-chips
+              cache-items
               return-object
               hide-details
               dense
@@ -59,11 +63,6 @@
           </v-flex>
         </v-layout>
       </v-card>
-      <div v-if="collectionIdList.length > 0">
-        <v-chip close @input="hideCollection(collection)" :key="collection" v-for="collection in collectionIdList">
-          {{ collection }}
-        </v-chip>
-      </div>
     </v-flex>
     <v-flex>
       <v-data-table
@@ -136,7 +135,8 @@ import {
   searchDocuments,
   getDocumentTotalCount,
   getDocumentsByCollection,
-  searchCollections } from '../api'
+  searchCollections,
+  getCollectionByIds } from '../api'
 import { geoStore } from '../store/geo'
 import * as FileSaver from 'file-saver'
 import * as xlsx from 'xlsx'
@@ -152,6 +152,7 @@ interface Places {
 export default class Database extends Vue {
 
   @Prop() collection_ids: string|null
+  @Prop() query: string|null
 
   geoStore = geoStore
   items: any[] = []
@@ -195,20 +196,12 @@ export default class Database extends Vue {
   @Watch('searchCollection')
   async onSearchCollection(val: string|null) {
     if (val !== null && val.trim() !== '') {
-      console.log(this.selectedCollections, this.collectionSearchItems)
       this.collectionSearchItems = (await searchCollections(val)).map(x => ({ ...x, text: x.name }))
     }
   }
 
-  hideCollection(id: string) {
-    const newList = this.collectionIdList.filter(x => x !== id)
-    if (newList.length > 0) {
-      this.$router.push({ query: { collection_ids: newList.join(',') } })
-      this.loadCollectionIds(this.collectionIdList)
-    } else {
-      this.$router.replace({ query: {} })
-      this.init()
-    }
+  selectCollections(colls: any[]) {
+    this.$router.replace({ query: { collection_ids: colls.map((x) => x.value).join() } })
   }
 
   get collectionIdList() {
@@ -258,12 +251,21 @@ export default class Database extends Vue {
   @Watch('collectionIdList')
   async loadCollectionIds(ids: string[]) {
     if (ids.length > 0) {
-      const res = await getDocumentsByCollection(ids[0])
-      this.items = res.documents.map(d => ({
-        ...d,
-        ...this.getPlacesFromSigle(d.ortsSigle)
-      }))
-      this.pagination.totalItems = res.total
+      this.searchItemType = 'collection'
+      this.searching = true
+      const ress = await Promise.all(ids.map((x) => getDocumentsByCollection(x)))
+      this.items = _(ress)
+        .flatMap(res => res.documents)
+        .uniqBy(d => d.id)
+        .map(d => ({ ...d, ...this.getPlacesFromSigle(d.ortsSigle)}))
+        .value()
+      this.pagination.totalItems = ress.reduce((m, v) => m + v.total , 0)
+      const cs = await getCollectionByIds(ids)
+      this.selectedCollections = cs.map(x => ({...x, text: x.name}))
+      this.collectionSearchItems = cs.map(x => ({...x, text: x.name}))
+      this.searching = false
+    } else {
+      this.selectedCollections = []
     }
   }
 
@@ -272,8 +274,8 @@ export default class Database extends Vue {
     if (newVal.page !== oldVal.page) {
       window.scroll({ top: 0, behavior: 'smooth' })
     }
-    if (this.searchTerm !== null) {
-      this.searchDatabase(this.searchTerm)
+    if (this.query) {
+      this.onChangeQuery(this.query)
     } else if (this.collection_ids) {
       this.loadCollectionIds(this.collectionIdList)
     } else {
@@ -299,7 +301,8 @@ export default class Database extends Vue {
     }
   }
 
-  async searchDatabase(search: string) {
+  @Watch('query')
+  async onChangeQuery(search: string|null) {
     if (search) {
       this.searching = true
       const res = await searchDocuments(
@@ -318,6 +321,10 @@ export default class Database extends Vue {
     } else {
       this.init()
     }
+  }
+
+  async searchDatabase(search: string) {
+    this.$router.replace({ query: { query: search } })
   }
 
   saveXLSX() {
