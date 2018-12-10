@@ -90,6 +90,7 @@ export default class Article extends Vue {
   geoStore = geoStore
   loading = false
   editor = {
+    id: '',
     initials: '',
     fullname: ''
   }
@@ -254,6 +255,7 @@ export default class Article extends Vue {
   }
 
   initXML(xml: string) {
+    let idInitials: any = {'PhS': 'PS'}
     xml = xml.split('<body>').join('').split('</body>').join('')
     xml = this.linkParentsToCollection('ptr[type=collection]', xml)
     xml = this.appendGrossregionViaRef('form[type=dialect] placeName[type=gemeinde], cit placeName[type=gemeinde]', xml)
@@ -270,7 +272,8 @@ export default class Article extends Vue {
     let aInitials = aEditor.getAttribute('ref')
     aInitials = typeof aInitials === 'string' ? aInitials.substr(1) : ''
     this.editor = {
-      initials: aInitials,
+      id: aInitials,
+      initials: idInitials[aInitials] || aInitials,
       fullname: aEditor.innerHTML
     }
   }
