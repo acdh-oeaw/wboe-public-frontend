@@ -13,7 +13,7 @@
       />
     </v-flex>
     <v-flex xs12>
-      <info-text lines="5" class="pa-4" path="wboe-artikel/wboe-artikelstruktur/" />
+      <info-text subDialog="true" class="pa-4" path="wboe-artikel/wboe-artikelstruktur/" />
       <v-list>
         <template v-for="(articles, i) in articlesByInitial">
           <v-subheader class="sticky" :key="'subheader' + i">{{ articles.initials }}</v-subheader>
