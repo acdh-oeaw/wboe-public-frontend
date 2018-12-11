@@ -49,7 +49,7 @@ export function isExternUrl(url: string): boolean {
 export function isLocalUrl(url: string): string|null {
   let rUrl = null
   Object.keys(localUrls).forEach((aUrl: any) => {
-    if (url.indexOf(aUrl) > -1) {
+    if (url.substr(url.length - aUrl.length) === aUrl) {
       rUrl = localUrls[aUrl]
     }
   });
