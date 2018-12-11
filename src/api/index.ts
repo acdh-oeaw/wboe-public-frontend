@@ -28,7 +28,13 @@ const apiEndpoint = 'https://dboeannotation.acdh-dev.oeaw.ac.at/api'
 const txtEndpoint = 'https://vawadioe.acdh.oeaw.ac.at/lioetxt/'
 const localEndpoint = process.env.API_HOST || 'http://localhost:8081'
 const articleEndpoint = localEndpoint + '/api/article'
-const localUrls: any = {'/lioetxt/lioe-start/': '/', '/lioetxt/wboe-artikel/': '/articles', '/lioetxt/wboe-karten/': '/maps', '/lioetxt/wboe-materialien/': '/resources', '/lioetxt/wboe-db/': '/db'}
+const localUrls: any = {
+  '/lioetxt/home/': '/',
+  '/lioetxt/wboe-artikel/': '/articles',
+  '/lioetxt/karten/': '/maps',
+  '/lioetxt/materialien/': '/resources',
+  '/lioetxt/belegdatenbank/': '/db'
+}
 
 function parseXML(str: string) {
   return (new (window as any).DOMParser()).parseFromString(str, 'application/xml') as XMLDocument

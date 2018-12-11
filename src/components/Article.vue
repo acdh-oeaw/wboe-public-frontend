@@ -12,9 +12,25 @@
         :items="articles"
         prepend-inner-icon="search"
       />
-      <v-layout align-baseline>
-        <v-flex @click="handleArticleClick" class="article-xml mb-3" v-html="metaXML" xs12 />
-        <v-flex>
+      <v-layout align-end>
+        <v-flex @click="handleArticleClick" xs12>
+          <div v-html="lemmaXML" class="article-xml" />
+        </v-flex>
+        <v-flex class="text-xs-right">
+          <v-menu open-on-hover max-width="400" max-height="95vh" top left>
+            <v-btn color="grey" class="mr-3" small slot="activator" icon flat>
+              <v-icon>info_outline</v-icon>
+            </v-btn>
+            <info-text class="elevation-24 pa-4 white" path="wboe-artikel/lemma-short/" />
+            <v-btn block color="ci" class="ma-0" dark>Weitere Informationen</v-btn>
+          </v-menu>
+        </v-flex>
+      </v-layout>
+      <v-layout align-end>
+        <v-flex @click="handleArticleClick" xs12>
+          <div v-html="diminutiveXML" />
+        </v-flex>
+        <v-flex class="text-xs-right">
           <v-btn small round flat @click="toggleAll">
             {{ isEveryArticleExpanded ? 'Einklappen' : 'Ausklappen'}}
           </v-btn>
@@ -38,8 +54,17 @@
             </v-card>
           </v-dialog>
         </v-flex>
+        <v-flex class="text-xs-right">
+          <v-menu open-on-hover max-width="400" max-height="95vh" top left>
+            <v-btn color="grey" class="mr-3" small slot="activator" icon flat>
+              <v-icon>info_outline</v-icon>
+            </v-btn>
+            <info-text class="elevation-24 pa-4 white" path="wboe-artikel/grammatische-angaben-short/" />
+            <v-btn block color="ci" class="ma-0" dark>Weitere Informationen</v-btn>
+          </v-menu>
+        </v-flex>
       </v-layout>
-      <v-expansion-panel @click.native="handleArticleClick" v-model="expanded" expand>
+      <v-expansion-panel class="mt-3" @click.native="handleArticleClick" v-model="expanded" expand>
         <article-fragment ext-info-url="wboe-artikel/verbreitung/" info-url="wboe-artikel/verbreitung-short/" :content="verbreitungXML" title="Verbreitung" />
         <article-fragment ext-info-url="wboe-artikel/belegauswahl/" info-url="wboe-artikel/belegauswahl-short/" :content="belegauswahlXML" title="Belegauswahl" />
         <article-fragment ext-info-url="wboe-artikel/etymologie/" info-url="wboe-artikel/etymologie-short/" :content="etymologieXML" title="Etymologie" />
@@ -111,7 +136,8 @@ export default class Article extends Vue {
   etymologieXML: string|null = null
   wortbildungXML: string|null = null
   redewendungenXML: string|null = null
-  metaXML: string|null = null
+  lemmaXML: string|null = null
+  diminutiveXML: string|null = null
 
   getGrossregionFromGemeinde(sigle: string): string|null {
     if (geoStore.grossregionen !== null) {
@@ -255,12 +281,12 @@ export default class Article extends Vue {
   }
 
   initXML(xml: string) {
-    let idInitials: any = {'PhS': 'PS'}
+    const idInitials: any = {PhS: 'PS'}
     xml = xml.split('<body>').join('').split('</body>').join('')
     xml = this.linkParentsToCollection('ptr[type=collection]', xml)
     xml = this.appendGrossregionViaRef('form[type=dialect] placeName[type=gemeinde], cit placeName[type=gemeinde]', xml)
-    this.metaXML = this.fragementFromSelector('entry > form[type=lemma], entry > form[subtype=diminutive], entry > gramGrp', xml)
-    console.log({meta: this.metaXML})
+    this.lemmaXML = this.fragementFromSelector('entry > form[type=lemma], entry > gramGrp', xml)
+    this.diminutiveXML = this.fragementFromSelector('entry > form[subtype=diminutive]', xml)
     this.bedeutungXML = this.fragementFromSelector('entry > sense', xml)
     this.verbreitungXML = this.fragementFromSelector('entry > usg[type=geo]', xml)
     this.belegauswahlXML = this.fragementFromSelector('entry > form[type=dialect]:not([subtype])', xml)

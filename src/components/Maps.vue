@@ -53,7 +53,7 @@
               <v-btn slot="activator" color="accent" icon flat>
                 <v-icon>info</v-icon>
               </v-btn>
-              <info-text class="elevation-24 pa-4 white" path="wboe-karten/infokasten-zur-den-karten/" />
+              <info-text class="elevation-24 pa-4 white" path="karten/infokasten-zur-den-karten/" />
             </v-menu>
           </v-flex>
         </v-layout>

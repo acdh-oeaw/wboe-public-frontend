@@ -13,7 +13,7 @@ import InfoText from '@components/InfoText.vue'
   }
 })
 export default class Resources extends Vue {
-  @Prop({ default: 'wboe-materialien/einleitungstext/' }) link: string|null
+  @Prop({ default: 'materialien/einleitungstext/' }) link: string|null
 }
 </script>
 <style lang="scss" scoped>

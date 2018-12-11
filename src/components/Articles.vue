@@ -5,6 +5,7 @@
         :loading="loading"
         autofocus
         flat
+        hide-details
         label="Suche…"
         prepend-inner-icon="search"
         @input="debouncedSearchArticle"

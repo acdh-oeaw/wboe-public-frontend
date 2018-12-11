@@ -69,7 +69,7 @@
               </v-btn>
               <v-card flat class="fill-height pa-4">
                 <v-card-text class="pa-0 fill-height">
-                  <info-text class="pt-4 white fill-height" path="wboe-db/suchmoeglichkeiten-in-der-wboe-db/" />
+                  <info-text class="pt-4 white fill-height" path="belegdatenbank/suchmoeglichkeiten-in-der-wboe-db/" />
                 </v-card-text>
               </v-card>
             </v-dialog>
