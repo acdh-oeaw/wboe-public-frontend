@@ -1,6 +1,6 @@
 <template>
   <div class="pt-4">
-    <info-text link-list :path="link" />
+    <info-text link-list subDialog="true" :path="link" />
   </div>
 </template>
 <script lang="ts">
