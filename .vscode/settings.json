@@ -10,14 +10,18 @@
     "Vuetify",
     "Vuex",
     "Wortart",
+    "artikel",
     "bundeslaender",
     "daten",
     "gemeinden",
     "geojson",
     "grossregionen",
+    "karten",
+    "materialien",
     "ortsliste",
     "ortslisten",
     "quelle",
-    "sigle"
+    "sigle",
+    "wboe"
   ]
 }
