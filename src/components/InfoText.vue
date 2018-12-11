@@ -54,7 +54,7 @@
 <script lang="ts">
 
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-import { getWebsiteHtml, isExternUrl } from '../api'
+import { getWebsiteHtml, isExternUrl, isLocalUrl } from '../api'
 
 @Component
 
@@ -109,7 +109,10 @@ export default class InfoText extends Vue {
         aLnk.addEventListener('click', async (e: any) => {
           if (e.target && e.target.href) {
             e.preventDefault()
-            if (isExternUrl(e.target.href)) {
+            let iLU = isLocalUrl(e.target.href)
+            if (iLU) {
+              this.$router.push(iLU)
+            } else if (isExternUrl(e.target.href)) {
               window.open(e.target.href, '_blank')
             } else {
               if (this.subDialog) {

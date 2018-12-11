@@ -28,6 +28,7 @@ const apiEndpoint = 'https://dboeannotation.acdh-dev.oeaw.ac.at/api'
 const txtEndpoint = 'https://vawadioe.acdh.oeaw.ac.at/lioetxt/'
 const localEndpoint = process.env.API_HOST || 'http://localhost:8081'
 const articleEndpoint = localEndpoint + '/api/article'
+const localUrls: any = {'/lioetxt/lioe-start/': '/', '/lioetxt/wboe-artikel/': '/articles', '/lioetxt/wboe-karten/': '/maps', '/lioetxt/wboe-materialien/': '/resources', '/lioetxt/wboe-db/': '/db'}
 
 function parseXML(str: string) {
   return (new (window as any).DOMParser()).parseFromString(str, 'application/xml') as XMLDocument
@@ -43,6 +44,16 @@ export async function getWebsiteHtml(path: string): Promise<string> {
 
 export function isExternUrl(url: string): boolean {
   return txtEndpoint !== url.substr(0, txtEndpoint.length)
+}
+
+export function isLocalUrl(url: string): string|null {
+  let rUrl = null
+  Object.keys(localUrls).forEach((aUrl: any) => {
+    if (url.indexOf(aUrl) > -1) {
+      rUrl = localUrls[aUrl]
+    }
+  });
+  return rUrl
 }
 
 export async function getDocumentTotalCount(): Promise<number> {
