@@ -1,0 +1,49 @@
+<template>
+  <div class="pa-5 text-xs-center">
+    <h1 class="text-light">Zugriffsgeschützter Bereich</h1>
+    <p class="grey--text">
+      Bitte geben Sie das Ihnen zugewiesene Passwort an.
+      <br>
+      Bei Fragen wenden sie sich bitte an <a href="philipp.stoeckle@oeaw.ac.at">Dr. Philipp Stöckle</a>.
+    </p>
+    <v-form @submit.prevent="submit">
+      <v-layout>
+        <v-flex xs12>
+          <v-text-field :error-messages="wrongPassword && 'Passwort falsch.'" autofocus v-model="aospdqweumkyxclkqwe" placeholder="Password" type="password" required solo>
+            <v-btn @click="submit" depressed color="accent" dark slot="append">ok</v-btn>
+          </v-text-field>
+        </v-flex>
+        <v-flex>
+        </v-flex>
+      </v-layout>
+    </v-form>
+  </div>
+</template>
+<script lang="ts">
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { userStore } from '../store/user'
+
+@Component
+export default class Password extends Vue {
+
+  @Prop() initial_url: string
+  adijweoqeoqkdkwoqkk = 'ZmxpZW5zY2hlbG4='
+  aospdqweumkyxclkqwe: string|null = null
+  wrongPassword = false
+  userStore = userStore
+  submit() {
+    if (this.aospdqweumkyxclkqwe !== null && btoa(this.aospdqweumkyxclkqwe) === this.adijweoqeoqkdkwoqkk) {
+      this.userStore.isLoggedIn = true
+      if (this.initial_url) {
+        this.$router.replace(this.initial_url)
+      } else {
+        this.$router.push('/')
+      }
+    } else {
+      this.wrongPassword = true
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+</style>

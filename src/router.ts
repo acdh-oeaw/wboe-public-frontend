@@ -6,6 +6,8 @@ import Articles from '@components/Articles.vue'
 import Article from '@components/Article.vue'
 import Database from '@components/Database.vue'
 import Resources from '@components/Resources.vue'
+import Password from '@components/Password.vue'
+import { userStore } from './store/user'
 
 const r = new Router({
   mode : 'history',
@@ -43,14 +45,24 @@ const r = new Router({
       props: (route) => ({ ...route.params, ...route.query })
     },
     {
+      path: '/password',
+      component: Password,
+      // combine route params and query params into props
+      props: (route) => ({ ...route.params, ...route.query })
+    },
+    {
       path: '*',
       component: NotFound
     }
   ]
 })
 
-// r.beforeEach((ro) => {
-//   console.log(ro)
-// })
+r.beforeEach((to, from, next) => {
+  if (userStore.isLoggedIn || to.path === '/password') {
+    next()
+  } else {
+    r.replace({ path: '/password', query: { initial_url: to.path } })
+  }
+})
 
 export default r
