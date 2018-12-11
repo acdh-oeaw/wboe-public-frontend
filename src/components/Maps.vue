@@ -38,7 +38,7 @@
               hide-details
               class="divider-left"
               v-model="searchItemType"
-              :items="['Ort', 'Lemma']" />
+              :items="[{text: 'Ort', value: 'Ort', disabled: false}, {text: 'Lemma', value: 'Lemma', disabled: true}]" />
           </v-flex>
           <v-flex>
             <v-tooltip color="secondary" dark top>
@@ -143,6 +143,17 @@ import domtoimage from 'dom-to-image'
 import * as L from 'leaflet'
 import * as _ from 'lodash'
 
+function base64ToBlob(dataURI: string) {
+  const byteString = atob(dataURI.split(',')[1])
+  const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+  const ab = new ArrayBuffer(byteString.length)
+  const dw = new DataView(ab)
+  for (let i = 0; i < byteString.length; i++) {
+    dw.setUint8(i, byteString.charCodeAt(i))
+  }
+  return new Blob([ab], {type: mimeString})
+}
+
 const defaultCenter = [47.64318610543658, 13.53515625]
 const defaultZoom = 7
 
@@ -237,8 +248,8 @@ export default class Maps extends Vue {
       const blob = await domtoimage.toSvg(el)
       FileSaver.saveAs(new Blob([blob]), 'map.svg')
     } else if (type === 'png') {
-      const blob = await domtoimage.toPng(el)
-      FileSaver.saveAs(new Blob([blob]), 'map.png')
+      const uriString = await domtoimage.toPng(el)
+      FileSaver.saveAs(base64ToBlob(uriString), 'map.png')
     } else if (type === 'json') {
       const blob = JSON.stringify(this.displayLocations, undefined, 2)
       FileSaver.saveAs(new Blob([blob]), 'map.json')
