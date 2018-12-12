@@ -4,7 +4,7 @@
     <p class="grey--text">
       Bitte geben Sie das Ihnen zugewiesene Passwort an.
       <br>
-      Bei Fragen wenden sie sich bitte an <a href="philipp.stoeckle@oeaw.ac.at">Dr. Philipp Stöckle</a>.
+      Bei Fragen wenden sie sich bitte an <a href="mailto:philipp.stoeckle@oeaw.ac.at">Dr. Philipp Stöckle</a>.
     </p>
     <v-form @submit.prevent="submit">
       <v-layout>
