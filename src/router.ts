@@ -61,7 +61,7 @@ r.beforeEach((to, from, next) => {
   if (userStore.isLoggedIn || to.path === '/password') {
     next()
   } else {
-    r.replace({ path: '/password', query: { initial_url: to.path } })
+    r.replace({ path: '/password', query: { initial_url: to.fullPath } })
   }
 })
 
