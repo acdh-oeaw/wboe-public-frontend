@@ -42,7 +42,8 @@ app.use(compression())
 app.use(bodyParser.json())
 app.get('/api/article', async (req, res) => {
   const r = (await axios({
-    url: 'https://wboe-curation.acdh-dev.oeaw.ac.at/exist/restxq/wboe-api/v0.1/article?max=150&lemma='+ encodeURIComponent(req.query.initial) +'&status=proofed',
+    url: 'https://wboe-curation.acdh-dev.oeaw.ac.at/exist/restxq/wboe-api/v0.1/article?max=150'
+      + (req.query.initial ? '&lemma='+ encodeURIComponent(req.query.initial) : '') + '&status=proofed',
     headers: {
       Accept: 'application/json'
     }
