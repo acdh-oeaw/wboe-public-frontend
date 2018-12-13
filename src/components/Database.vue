@@ -192,7 +192,7 @@ export default class Database extends Vue {
   headers = [
     { text: 'Hauptlemma', value: 'Hauptlemma' },
     { text: 'Wortart', value: 'Wortart' },
-    { text: 'Lautung', value: 'Nebenlemma' },
+    { text: 'Lautung', value: 'Lautung' },
     { text: 'Bedeutung', value: 'Bedeutung' },
     { text: 'Kontext', value: 'Kontext' },
     { text: 'FB-Nr.', value: 'Fragebogennummer' },
