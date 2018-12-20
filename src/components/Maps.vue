@@ -223,7 +223,7 @@ export default class Maps extends Vue {
     onEachFeature: this.onEachFeatureFunction,
     pointToLayer: (feature: any, latlng: any) => {
 			return L.circleMarker(latlng, {
-				radius: 3,
+				radius: 5,
 				fillColor: '#ff7800',
 				color: '#000',
 				weight: 1,
@@ -354,7 +354,8 @@ export default class Maps extends Vue {
         weight: 1,
         color: '#333333',
         opacity: 1,
-        fillColor: aThis.randomColors[aSigleS],
+        // fillColor: aThis.randomColors[aSigleS],
+        fillColor: '#800',
         fillOpacity: 0.5
       }
     }
@@ -377,7 +378,8 @@ export default class Maps extends Vue {
       layer.on('mouseout', function(this: any) {
         const aSigleS = feature.properties.sigle
         this.setStyle({
-          fillColor: aThis.randomColors[aSigleS],
+          // fillColor: aThis.randomColors[aSigleS],
+          fillColor: '#800',
           fillOpacity: 0.5
         });
       });
