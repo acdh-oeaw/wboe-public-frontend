@@ -173,9 +173,28 @@ export default class Maps extends Vue {
 
   tileSets = [
     {
-      name: 'Standard',
+      name: 'Humanitarian Open Tiles',
+      url: 'http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png '
+    },
+    {
+      name: 'Wikimedia',
+      url: 'https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png'
+    },
+    {
+      name: 'Hell ohne Labels',
+      url: 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_nolabels/{z}/{x}/{y}.png',
+      attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL'
+    },
+    {
+      name: 'Hell mit Lables',
       url: 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
       attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL'
+    },
+    {
+      name: 'Terrain',
+      url: 'http://tile.stamen.com/terrain/{z}/{x}/{y}.jpg',
+      // tslint:disable-next-line:max-line-length
+      attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
     },
     {
       name: 'Toner',
