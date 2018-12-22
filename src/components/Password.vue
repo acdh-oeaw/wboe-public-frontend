@@ -9,7 +9,7 @@
     <v-form @submit.prevent="submit">
       <v-layout>
         <v-flex xs12>
-          <v-text-field :error-messages="wrongPassword && 'Passwort falsch.'" autofocus v-model="aospdqweumkyxclkqwe" placeholder="Password" type="password" required solo>
+          <v-text-field :error-messages="wrongPassword ? 'Passwort falsch.' : []" autofocus v-model="aospdqweumkyxclkqwe" placeholder="Password" type="password" required solo>
             <v-btn @click="submit" depressed color="accent" dark slot="append">ok</v-btn>
           </v-text-field>
         </v-flex>
