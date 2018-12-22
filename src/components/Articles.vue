@@ -55,7 +55,8 @@ export default class Articles extends Vue {
       .groupBy((a) => this.getCleanInitial(a.title))
       .map((v, k) => ({
         initials: k,
-        articles: v.sort((a, b) => a.title.localeCompare(b.title)) }))
+        articles: v.sort((a, b) => a.title.localeCompare(b.title))
+      }))
       .value()
       .sort((a, b) => a.initials.localeCompare(b.initials))
   }
