@@ -70,8 +70,15 @@ export default class ArticleFragment extends Vue {
     &[subtype="diminutive"] orth{
       font-style: italic
     }
-    & + form[type="dialect"]::before {
+    &::after{
+      display: inline-block;
+      margin-left: -.25em;
+      margin-right: .25em;
       content: ', ';
+    }
+    &:last-of-type::after{
+      content: '';
+      display: none;
     }
   }
   > form[type="lemma"] > orth {
@@ -154,7 +161,7 @@ export default class ArticleFragment extends Vue {
   }
   placename[ref] {
     cursor: pointer;
-    display: inline-block;
+    display: inline;
     opacity: .6;
     &[type=bundesland]{
       &::after{
