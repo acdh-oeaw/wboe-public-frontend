@@ -376,9 +376,9 @@ export default class Maps extends Vue {
     }
   }
   get styleFunction() {
-    let aThis: any = this
+    const aThis: any = this
     return (feature: any) => {
-      let aSigleS: string = feature.properties.sigle
+      const aSigleS: string = feature.properties.sigle
       if (!aThis.randomColors[aSigleS]) {
         aThis.randomColors[aSigleS] = '#' + Math.floor(Math.random() * 16777215).toString(16)
       }
