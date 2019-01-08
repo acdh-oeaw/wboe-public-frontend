@@ -24,9 +24,9 @@ async function init() {
 
 function filterOrtslisteByGeoJSON (oList: any, gList: any) {
   if (oList !== null && gList !== null) {
-    let nOList: any[] = []
-    let mSigle: any[] = []
-    let gListSigles = gList.map((gObj: any) => {
+    const nOList: any[] = []
+    const mSigle: any[] = []
+    const gListSigles = gList.map((gObj: any) => {
       return gObj.properties.sigle || gObj.properties.Sigle
     })
     oList.forEach((oObj: any) => {
