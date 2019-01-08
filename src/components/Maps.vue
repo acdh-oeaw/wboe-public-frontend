@@ -79,8 +79,10 @@
               <v-radio-group v-model="selectedTileSet">
                 <v-radio v-for="(tileSet, i) in tileSets" :value="i" :key="i" :label="tileSet.name" />
               </v-radio-group>
-              <v-checkbox v-model="showRivers" hide-details label="Flüsse"/>
-              <v-checkbox v-model="showHillshades" hide-details label="Gebirge"/>
+              <v-checkbox v-model="showRivers" hide-details label="Flüsse" />
+              <v-checkbox v-model="showHillshades" hide-details label="Gebirge" />
+              <v-checkbox v-model="showDialektregionen" hide-details label="Dialektregionen" />
+              <v-checkbox v-model="showBundeslaender" hide-details label="Bundesländer" />
             </v-card-text>
           </v-card>
         </v-menu>
@@ -126,6 +128,17 @@
         :optionsStyle="styleFunction"
         />
       <l-geo-json
+        v-if="showDialektregionen"
+        :options="{ onEachFeature: bindTooltip() }"
+        :geojson="dialektregionen"
+      />
+      <l-geo-json
+        v-if="showBundeslaender"
+        :options="{ onEachFeature: bindTooltip() }"
+        :geojson="bundeslaender"
+        :optionsStyle="{ fillColor: '#800', color: '#800' }"
+      />
+      <l-geo-json
         v-if="showRivers && rivers !== null"
         :geojson="rivers"
       />
@@ -137,6 +150,7 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { LMap, LTileLayer, LMarker, LGeoJson, LIconDefault } from 'vue2-leaflet'
 import InfoText from '@components/InfoText.vue'
+import * as geojson from 'geojson'
 import { geoStore } from '../store/geo'
 import * as FileSaver from 'file-saver'
 import domtoimage from 'dom-to-image'
@@ -205,6 +219,8 @@ export default class Maps extends Vue {
 
   showHillshades = false
   showRivers = false
+  showDialektregionen = false
+  showBundeslaender = false
 
   rivers: any = null
   autoFit = false
@@ -212,7 +228,7 @@ export default class Maps extends Vue {
   center: number[] = defaultCenter
   geoStore = geoStore
   fillColor: string = '#2467a7'
-  // url = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+
   attribution: string = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
   randomColors: object = {}
   mapOptions = {
@@ -237,11 +253,11 @@ export default class Maps extends Vue {
   layerGeoJson: any = null
   map: any = null
 
-  get tileSetUrl() {
+  get tileSetUrl(): string {
     return this.tileSets[this.selectedTileSet].url
   }
 
-  get selectedLocations() {
+  get selectedLocations(): string[] {
     if (this.loc) {
       return this.loc.split(',')
     } else {
@@ -289,8 +305,10 @@ export default class Maps extends Vue {
     }
   }
 
-  get allFeatures() {
-    if (!this.isLoading) {
+  get allFeatures(): geojson.Feature[] {
+    if (this.isLoading) {
+      return []
+    } else {
       return _([
         ...this.geoStore.bundeslaender!.features,
         ...this.geoStore.grossregionen!.features,
@@ -311,6 +329,20 @@ export default class Maps extends Vue {
           }
         }
       }).value()
+    }
+  }
+
+  get bundeslaender(): geojson.Feature[] {
+    if (!this.isLoading && this.geoStore.bundeslaender !== null) {
+      return this.geoStore.bundeslaender.features
+    } else {
+      return []
+    }
+  }
+
+  get dialektregionen(): geojson.Feature[] {
+    if (!this.isLoading && this.geoStore.dialektregionen !== null) {
+      return this.geoStore.dialektregionen.features
     } else {
       return []
     }
@@ -360,13 +392,24 @@ export default class Maps extends Vue {
       }
     }
   }
+
+  bindTooltip(properties = ['name']) {
+    return (feature: geojson.Feature, layer: L.Layer) => {
+      layer.bindTooltip(
+        properties
+          .map(p => `<div>${ (feature.properties as any)[p] }</div>`)
+          .join(''),
+        { permanent: false, sticky: true }
+      )
+    }
+  }
+
   get onEachFeatureFunction() {
     const aThis: any = this
-    return (feature: any, layer: any) => {
+    return (feature: geojson.Feature, layer: L.Layer) => {
       layer.bindTooltip(`
-        <div>name: ${feature.properties.name}</div>
-        <div>sigle: ${feature.properties.sigle}</div>
-        <div>sigle: ${feature.properties.sigle}</div>`,
+        <div>name: ${(feature.properties as any).name}</div>
+        <div>sigle: ${(feature.properties as any).sigle}</div>`,
         { permanent: false, sticky: true }
       )
       layer.on('mouseover', function(this: any) {
@@ -376,7 +419,7 @@ export default class Maps extends Vue {
         });
       });
       layer.on('mouseout', function(this: any) {
-        const aSigleS = feature.properties.sigle
+        const aSigleS = (feature.properties as any).sigle
         this.setStyle({
           // fillColor: aThis.randomColors[aSigleS],
           fillColor: '#800',
