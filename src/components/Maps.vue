@@ -129,12 +129,12 @@
         />
       <l-geo-json
         v-if="showDialektregionen"
-        :options="{ onEachFeature: bindTooltip() }"
+        :options="{ onEachFeature: bindTooltip(['name']) }"
         :geojson="dialektregionen"
       />
       <l-geo-json
         v-if="showBundeslaender"
-        :options="{ onEachFeature: bindTooltip() }"
+        :options="{ onEachFeature: bindTooltip(['name']) }"
         :geojson="bundeslaender"
         :optionsStyle="{ fillColor: '#800', color: '#800' }"
       />
@@ -393,11 +393,11 @@ export default class Maps extends Vue {
     }
   }
 
-  bindTooltip(properties = ['name']) {
+  bindTooltip(properties = ['name'], showLabel = false) {
     return (feature: geojson.Feature, layer: L.Layer) => {
       layer.bindTooltip(
         properties
-          .map(p => `<div>${ (feature.properties as any)[p] }</div>`)
+          .map(p => `<div>${showLabel ? p + ': ' : ''}${ (feature.properties as any)[p] }</div>`)
           .join(''),
         { permanent: false, sticky: true }
       )
@@ -407,25 +407,21 @@ export default class Maps extends Vue {
   get onEachFeatureFunction() {
     const aThis: any = this
     return (feature: geojson.Feature, layer: L.Layer) => {
-      layer.bindTooltip(`
-        <div>name: ${(feature.properties as any).name}</div>
-        <div>sigle: ${(feature.properties as any).sigle}</div>`,
-        { permanent: false, sticky: true }
-      )
+      this.bindTooltip(['name', 'sigle'], true)(feature, layer)
       layer.on('mouseover', function(this: any) {
         this.setStyle({
           fillColor: '#0000ff',
           fillOpacity: 1
-        });
-      });
+        })
+      })
       layer.on('mouseout', function(this: any) {
         const aSigleS = (feature.properties as any).sigle
         this.setStyle({
           // fillColor: aThis.randomColors[aSigleS],
           fillColor: '#800',
           fillOpacity: 0.5
-        });
-      });
+        })
+      })
     }
   }
   get isLoading() {
