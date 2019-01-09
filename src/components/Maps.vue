@@ -130,13 +130,22 @@
       <l-geo-json
         v-if="showDialektregionen"
         :options="{ onEachFeature: bindTooltip(['name']) }"
+        :optionsStyle="(feature) => ({
+          fillColor : dialektColors[feature.properties.id],
+          color: dialektColors[feature.properties.id],
+          weight: 2
+        })"
         :geojson="dialektregionen"
       />
       <l-geo-json
         v-if="showBundeslaender"
         :options="{ onEachFeature: bindTooltip(['name']) }"
         :geojson="bundeslaender"
-        :optionsStyle="{ fillColor: '#800', color: '#800' }"
+        :optionsStyle="{
+          fillOpacity: 0,
+          color: '#800',
+          weight: 2
+        }"
       />
       <l-geo-json
         v-if="showRivers && rivers !== null"
@@ -228,6 +237,12 @@ export default class Maps extends Vue {
   center: number[] = defaultCenter
   geoStore = geoStore
   fillColor: string = '#2467a7'
+  dialektColors = [
+    'rgba(0,0,200,0.8)',
+    'rgba(0,200,0,0.8)',
+    'rgba(200,0,0,0.8)',
+    'rgba(250,200,0,0.8)'
+  ]
 
   attribution: string = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
   randomColors: object = {}
