@@ -121,13 +121,6 @@
         url="http://{s}.tiles.wmflabs.org/hillshading/{z}/{x}/{y}.png"
       />
       <l-geo-json
-        v-if="selectedLocations.length > 0"
-        ref="layerGeoJson"
-        :geojson="displayLocations"
-        :options="options"
-        :optionsStyle="styleFunction"
-        />
-      <l-geo-json
         v-if="showDialektregionen"
         :options="{ onEachFeature: bindTooltip(['name']) }"
         :optionsStyle="(feature) => ({
@@ -150,6 +143,13 @@
       <l-geo-json
         v-if="showRivers && rivers !== null"
         :geojson="rivers"
+      />
+      <l-geo-json
+        v-if="selectedLocations.length > 0"
+        ref="layerGeoJson"
+        :geojson="displayLocations"
+        :options="options"
+        :optionsStyle="styleFunction"
       />
     </l-map>
   </div>
