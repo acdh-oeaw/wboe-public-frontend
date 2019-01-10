@@ -126,7 +126,8 @@
         :optionsStyle="(feature) => ({
           fillColor : dialektColors[feature.properties.id],
           color: dialektColors[feature.properties.id],
-          weight: 2
+          weight: 2,
+          fillOpacity: 1
         })"
         :geojson="dialektregionen"
       />
@@ -238,10 +239,11 @@ export default class Maps extends Vue {
   geoStore = geoStore
   fillColor: string = '#2467a7'
   dialektColors = [
-    'rgba(0,0,200,0.8)',
-    'rgba(0,200,0,0.8)',
-    'rgba(200,0,0,0.8)',
-    'rgba(250,200,0,0.8)'
+    'rgba(182, 216, 203, .8)',
+    'rgba(153, 153, 241, .5)',
+    'rgba(153, 153, 241, .8)',
+    'rgba(153, 153, 241, .95)',
+    'rgba(0, 153, 0, .7)'
   ]
 
   attribution: string = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
