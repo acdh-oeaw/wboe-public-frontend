@@ -117,11 +117,11 @@
         :url="tileSetUrl"
         :attribution="tileSets[selectedTileSet].attribution" />
       <l-tile-layer
-        v-if="showHillshades"
+        v-if="!updateLayers && showHillshades"
         url="http://{s}.tiles.wmflabs.org/hillshading/{z}/{x}/{y}.png"
       />
       <l-geo-json
-        v-if="showDialektregionen"
+        v-if="!updateLayers && showDialektregionen"
         :options="{ onEachFeature: bindTooltip(['name']) }"
         :optionsStyle="(feature) => ({
           fillColor : dialektColors[feature.properties.id],
@@ -132,7 +132,7 @@
         :geojson="dialektregionen"
       />
       <l-geo-json
-        v-if="showBundeslaender"
+        v-if="!updateLayers && showBundeslaender"
         :options="{ onEachFeature: bindTooltip(['name']) }"
         :geojson="bundeslaender"
         :optionsStyle="{
@@ -142,11 +142,11 @@
         }"
       />
       <l-geo-json
-        v-if="showRivers && rivers !== null"
+        v-if="!updateLayers && showRivers && rivers !== null"
         :geojson="rivers"
       />
       <l-geo-json
-        v-if="selectedLocations.length > 0"
+        v-if="!updateLayers && selectedLocations.length > 0"
         ref="layerGeoJson"
         :geojson="displayLocations"
         :options="options"
@@ -231,6 +231,7 @@ export default class Maps extends Vue {
   showRivers = false
   showDialektregionen = false
   showBundeslaender = false
+  updateLayers = false
 
   rivers: any = null
   autoFit = false
@@ -456,6 +457,29 @@ export default class Maps extends Vue {
   async loadRivers() {
     // tslint:disable-next-line:max-line-length
     this.rivers = await (await fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_rivers_europe.geojson')).json()
+  }
+  @Watch('showHillshades')
+  @Watch('showDialektregionen')
+  @Watch('showBundeslaender')
+  @Watch('showRivers')
+  @Watch('showHillshades')
+  layerChanged() {
+    this.updateLayers = true
+  }
+  @Watch('selectedLocations')
+  layerChangedSL(nVal: any, oVal: any) {
+    if ((oVal && oVal.length > 0) && (!nVal || nVal.length === 0)
+    || (nVal && nVal.length > 0) && (!oVal || oVal.length === 0)) {
+      this.updateLayers = true
+    }
+  }
+  @Watch('updateLayers')
+  layerUpdate(nVal: any) {
+    if (nVal) {
+      this.$nextTick(() => {
+        this.updateLayers = false
+      })
+    }
   }
   mounted() {
     this.loadRivers()
