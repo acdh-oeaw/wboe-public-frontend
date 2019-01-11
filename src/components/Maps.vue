@@ -462,7 +462,7 @@ export default class Maps extends Vue {
   @Watch('showDialektregionen')
   @Watch('showBundeslaender')
   @Watch('showRivers')
-  @Watch('showHillshades')
+  @Watch('selectedTileSet')
   layerChanged() {
     this.updateLayers = true
   }
