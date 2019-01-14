@@ -17,13 +17,22 @@
         </v-flex>
       </v-layout>
     </v-form>
+    <InfoBox>
+      <h4 class="headline mb-0">Sie suchen Informationen zum neu angelegten WBÖ-Projekt?</h4>
+      <div>Alle Informationen zum „Wörterbuch der bairischen Mundarten in Österreich“ finden Sie <a href="https://vawadioe.acdh.oeaw.ac.at/projekte/wboe/wboe-startseite/" target="_blank">hier</a>.</div>
+    </InfoBox>
   </div>
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { userStore } from '../store/user'
+import InfoBox from '@components/InfoBox.vue'
 
-@Component
+@Component({
+  components: {
+    InfoBox
+  }
+})
 export default class Password extends Vue {
 
   @Prop() initial_url: string

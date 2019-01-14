@@ -36,6 +36,10 @@
       </template>
       </vue-word-cloud>
     </v-flex>
+    <InfoBox class="mt-5">
+      <h4 class="headline mb-0">Sie suchen Informationen zum neu angelegten WBÖ-Projekt?</h4>
+      <div>Alle Informationen zum „Wörterbuch der bairischen Mundarten in Österreich“ finden Sie <a href="https://vawadioe.acdh.oeaw.ac.at/projekte/wboe/wboe-startseite/" target="_blank">hier</a>.</div>
+    </InfoBox>
     <v-flex class="pt-4">
       <info-text subDialog="true" path="home/einleitungstext/" />
     </v-flex>
@@ -46,10 +50,12 @@ import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import * as _ from 'lodash'
 import InfoText from '@components/InfoText.vue'
 import { getArticles } from '../api'
+import InfoBox from '@components/InfoBox.vue'
 
 @Component({
   components: {
-    InfoText
+    InfoText,
+    InfoBox
   }
 })
 export default class Main extends Vue {
