@@ -37,7 +37,7 @@
       </vue-word-cloud>
     </v-flex>
     <InfoBox class="mt-5">
-      <h4 class="headline mb-0">Sie suchen Informationen zum neu angelegten WBÖ-Projekt?</h4>
+      <h4 class="headline mb-0">Sie suchen das WBÖ-Projekt?</h4>
       <div>Alle Informationen zum „Wörterbuch der bairischen Mundarten in Österreich“ finden Sie <a href="https://vawadioe.acdh.oeaw.ac.at/projekte/wboe/wboe-startseite/" target="_blank">hier</a>.</div>
     </InfoBox>
     <v-flex class="pt-4">
