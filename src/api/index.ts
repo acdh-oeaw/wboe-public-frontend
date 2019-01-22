@@ -182,13 +182,15 @@ export async function searchDocuments(
   }
 }
 
-export async function getDocumentsByCollection(id: string, page = 1, items = 100): Promise<Documents> {
-  const r = await (await fetch(apiEndpoint + `/documents/?in_collections=${ id }`)).json()
+export async function getDocumentsByCollection(ids: string[], page = 1, items = 100): Promise<Documents> {
+  const r = await (await fetch(apiEndpoint + `/documents/?${
+    ids.map(id => 'in_collections=' + id).join('&')
+  }&page_size=${ items }&page=${ page }`)).json()
   const ds = await (await axios({
     url: localEndpoint + '/es-query',
     method: 'POST',
     data: {
-      from: (page - 1) * items,
+      from: 0,
       size: items,
       query: {
         ids: {
@@ -206,7 +208,7 @@ export async function getDocumentsByCollection(id: string, page = 1, items = 100
         ortsSigle: sigleFromEsRef(h._source.entry.ref)
       }
     }),
-    total: ds.hits.total
+    total: r.count
   }
 }
 

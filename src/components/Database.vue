@@ -271,13 +271,13 @@ export default class Database extends Vue {
     if (ids.length > 0) {
       this.searchItemType = 'collection'
       this.searching = true
-      const ress = await Promise.all(ids.map((x) => getDocumentsByCollection(x)))
-      this.items = _(ress)
-        .flatMap(res => res.documents)
+      const res = await getDocumentsByCollection(ids, this.pagination.page)
+      this.items = _(res.documents)
         .uniqBy(d => d.id)
         .map(d => ({ ...d, ...this.getPlacesFromSigle(d.ortsSigle)}))
         .value()
-      this.pagination.totalItems = ress.reduce((m, v) => m + v.total , 0)
+      console.log({res})
+      this.pagination.totalItems = res.total
       const cs = await getCollectionByIds(ids)
       this.selectedCollections = cs.map(x => ({...x, text: x.name}))
       this.collectionSearchItems = cs.map(x => ({...x, text: x.name}))
