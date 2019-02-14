@@ -76,6 +76,10 @@
           </v-flex>
         </v-layout>
       </v-card>
+      <InfoBox class="mt-2 mb-2">
+        <h4 class="headline mb-0">Hinweis</h4>
+        <div>Derzeit handelt es sich noch um eine vorläufige Version, in der noch nicht alle in der Datenbank vorhandenen Gemeinden und Regionen angezeigt werden können!</div>
+      </InfoBox>
     </v-flex>
     <v-flex>
       <v-data-table
@@ -144,6 +148,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import InfoText from '@components/InfoText.vue'
+import InfoBox from '@components/InfoBox.vue'
 import {
   getDocuments,
   searchDocuments,
@@ -164,7 +169,8 @@ interface Places {
 
 @Component({
   components: {
-    InfoText
+    InfoText,
+    InfoBox
   }
 })
 export default class Database extends Vue {

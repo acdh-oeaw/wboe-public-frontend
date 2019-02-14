@@ -58,6 +58,10 @@
           </v-flex>
         </v-layout>
       </v-card>
+      <InfoBox fstyle="position:relative;z-index:1;margin-bottom:-129px!important;margin-top:15px!important;">
+        <h4 class="headline mb-0">Hinweis</h4>
+        <div>Derzeit handelt es sich noch um eine vorläufige Version, in der noch nicht alle in der Datenbank vorhandenen Gemeinden und Regionen angezeigt werden können!</div>
+      </InfoBox>
     <v-layout fill-height class="map-overlay pa-4">
       <v-flex xs1>
         <v-btn fab small @click="zoom = zoom + 1"><v-icon>add</v-icon></v-btn>
@@ -160,6 +164,7 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { LMap, LTileLayer, LMarker, LGeoJson, LIconDefault } from 'vue2-leaflet'
 import InfoText from '@components/InfoText.vue'
+import InfoBox from '@components/InfoBox.vue'
 import * as geojson from 'geojson'
 import { geoStore } from '../store/geo'
 import * as FileSaver from 'file-saver'
@@ -184,6 +189,7 @@ const defaultZoom = 7
 @Component({
   components: {
     InfoText,
+    InfoBox,
     LMap,
     LTileLayer,
     LGeoJson,

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-flex xs12 sm12 md10 lg8 xl6 offset-md1 offset-lg2 offset-xl3 v-if="show">
+    <v-flex xs12 sm12 md10 lg8 xl6 offset-md1 offset-lg2 offset-xl3 :style="fstyle" v-if="show">
       <v-card>
         <v-card-text primary-title>
           <div class="text-xs-center w-100">
@@ -22,6 +22,7 @@ import { getWebsiteHtml, isExternUrl, isLocalUrl } from '../api'
 @Component
 
 export default class InfoBox extends Vue {
+  @Prop({ default: null }) fstyle: string|null
   show: boolean = true
 }
 </script>
