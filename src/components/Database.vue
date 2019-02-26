@@ -78,7 +78,7 @@
       </v-card>
       <InfoBox class="mt-2 mb-2">
         <h4 class="headline mb-0">Hinweis</h4>
-        <div>Derzeit handelt es sich noch um eine vorläufige Version, in der noch nicht alle in der Datenbank vorhandenen Gemeinden und Regionen angezeigt werden können!</div>
+        <div>Derzeit handelt es sich noch um eine vorläufige Version, in der noch nicht alle in der Datenbank vorhandenen Gemeinden und Regionen sowie Transkriptionszeichen zur Wiedergabe der Dialektlautung angezeigt werden können!</div>
       </InfoBox>
     </v-flex>
     <v-flex>
