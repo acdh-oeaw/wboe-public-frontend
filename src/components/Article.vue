@@ -84,6 +84,13 @@
           <span>{{ editor.fullname }}</span>
         </v-tooltip>
       </div>
+      <v-flex xs12 sm12 md10 lg8 xl6 offset-md1 offset-lg2 offset-xl3>
+        <v-card>
+          <v-card-text class="pa-0">
+            <iframe :src="commentUrl" class="comment"/>
+          </v-card-text>
+        </v-card>
+      </v-flex>
     </v-flex>
   </v-layout>
 </template>
@@ -138,6 +145,10 @@ export default class Article extends Vue {
   redewendungenXML: string|null = null
   lemmaXML: string|null = null
   diminutiveXML: string|null = null
+
+  get commentUrl() : string {
+    return 'https://vawadioe.acdh.oeaw.ac.at/lioecomment/?artikel=' + this.title + '&author=' + (this.editor.initials ? this.editor.initials.toLowerCase() : this.editor.fullname)
+  }
 
   getGrossregionFromGemeinde(sigle: string): string|null {
     if (geoStore.grossregionen !== null) {
@@ -313,6 +324,12 @@ export default class Article extends Vue {
 }
 </script>
 <style lang="scss">
+iframe.comment {
+  border: none;
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+}
 .wortbildung, .redewendungen{
   re{
     display: block;
