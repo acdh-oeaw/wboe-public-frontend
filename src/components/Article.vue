@@ -84,7 +84,7 @@
           <span>{{ editor.fullname }}</span>
         </v-tooltip>
       </div>
-      <v-flex xs12 sm12 md10 lg8 xl6 offset-md1 offset-lg2 offset-xl3>
+      <v-flex xs12 sm12 md10 lg8 xl6 offset-md1 offset-lg2 offset-xl3 v-if="userStore.showComment">
         <v-card>
           <v-card-text class="pa-0">
             <iframe :src="commentUrl" class="comment"/>
@@ -105,6 +105,7 @@ import * as _ from 'lodash'
 import InfoText from '@components/InfoText.vue'
 import ArticleFragment from '@components/ArticleFragment.vue'
 import * as FileSaver from 'file-saver'
+import { userStore } from '../store/user'
 
 @Component({
   components: {
@@ -145,6 +146,7 @@ export default class Article extends Vue {
   redewendungenXML: string|null = null
   lemmaXML: string|null = null
   diminutiveXML: string|null = null
+  userStore = userStore
 
   get commentUrl() : string {
     return 'https://vawadioe.acdh.oeaw.ac.at/lioecomment/?artikel=' + this.title + '&author=' + (this.editor.initials ? this.editor.initials.toLowerCase() : this.editor.fullname)

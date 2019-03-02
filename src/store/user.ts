@@ -1,4 +1,5 @@
 
 export const userStore = {
-  isLoggedIn: false
+  isLoggedIn: false,
+  showComment: false
 }

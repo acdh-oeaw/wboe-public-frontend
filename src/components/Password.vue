@@ -37,12 +37,14 @@ export default class Password extends Vue {
 
   @Prop() initial_url: string
   adijweoqeoqkdkwoqkk = 'ZmxpZW5zY2hlbG4='
+  adiuieuenslkfiwensd = 'ZmV1cmV0emVu'
   aospdqweumkyxclkqwe: string|null = null
   wrongPassword = false
   userStore = userStore
   submit() {
-    if (this.aospdqweumkyxclkqwe !== null && btoa(this.aospdqweumkyxclkqwe) === this.adijweoqeoqkdkwoqkk) {
+    if (this.aospdqweumkyxclkqwe !== null && (btoa(this.aospdqweumkyxclkqwe) === this.adijweoqeoqkdkwoqkk || btoa(this.aospdqweumkyxclkqwe) === this.adiuieuenslkfiwensd)) {
       this.userStore.isLoggedIn = true
+      this.userStore.showComment = btoa(this.aospdqweumkyxclkqwe) === this.adiuieuenslkfiwensd
       if (this.initial_url) {
         this.$router.replace(this.initial_url)
       } else {
