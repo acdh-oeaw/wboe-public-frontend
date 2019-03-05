@@ -3,7 +3,7 @@
     <v-content>
       <v-container fill-height class="pa-0" app>
         <v-layout column>
-          <v-flex>
+          <v-flex class="header-navigation">
             <!-- <v-flex class="text-xs-right" xs12>
               <v-btn class="text-no-transform" color="grey" small round flat>test</v-btn>
               <v-btn class="text-no-transform" color="grey" small round flat>test</v-btn>
@@ -15,7 +15,7 @@
               </v-flex>
             </v-layout>
           </v-flex>
-          <v-flex class="pl-3 pr-3">
+          <v-flex class="pl-3 pr-3 header-navigation">
             <v-flex>
               <v-tabs
                 active-class="active-tab"
@@ -39,7 +39,7 @@
               <router-view />
             </keep-alive>
           </v-flex>
-          <v-flex class="pl-5 pr-5 xmt-5 pb-5 text-xs-center" v-if="$route.name !== 'maps'">
+          <v-flex class="pl-5 pr-5 xmt-5 pb-5 text-xs-center footer-navigation" v-if="$route.name !== 'maps'">
             <v-divider class="ma-5" />
             <h4 class="mb-2 mt-2 grey--text">Ein Projekt von</h4>
             <v-layout align-center justify-space-around wrap>

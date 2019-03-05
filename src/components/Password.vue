@@ -47,6 +47,7 @@ export default class Password extends Vue {
       this.userStore.showComment = false
       this.userStore.articleStatus = 'proofed'
       if (btoa(this.aospdqweumkyxclkqwe) === this.adiuieuenslkfiwensd) {
+        this.userStore.showPdfPrintButton = true
         this.userStore.showComment = true
         this.userStore.articleStatus = ''
       }

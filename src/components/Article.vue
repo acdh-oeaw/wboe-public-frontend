@@ -2,6 +2,7 @@
   <v-layout column>
     <v-flex xs12>
       <v-autocomplete
+        class="article-search"
         label="Suche…"
         :value="{ text: title, value: filename.replace('.xml', '')}"
         :loading="loading"
@@ -26,13 +27,18 @@
           </v-menu>
         </v-flex>
       </v-layout>
-      <v-layout align-end>
+      <v-layout class="article-tools" align-end>
         <v-flex @click="handleArticleClick" xs12>
           <div v-html="diminutiveXML" />
         </v-flex>
         <v-flex class="text-xs-right">
           <v-btn small round flat @click="toggleAll">
             {{ isEveryArticleExpanded ? 'Einklappen' : 'Ausklappen'}}
+          </v-btn>
+        </v-flex>
+        <v-flex v-if="userStore.showPdfPrintButton">
+          <v-btn small round flat @click="printArticle">
+            PDF
           </v-btn>
         </v-flex>
         <v-flex class="text-xs-right">
@@ -64,18 +70,18 @@
           </v-menu>
         </v-flex>
       </v-layout>
-      <v-expansion-panel class="mt-3" @click.native="handleArticleClick" v-model="expanded" expand>
-        <article-fragment ext-info-url="wboe-artikel/verbreitung/" info-url="wboe-artikel/verbreitung-short/" :content="verbreitungXML" title="Verbreitung" />
-        <article-fragment ext-info-url="wboe-artikel/belegauswahl/" info-url="wboe-artikel/belegauswahl-short/" :content="belegauswahlXML" title="Belegauswahl" />
-        <article-fragment ext-info-url="wboe-artikel/etymologie/" info-url="wboe-artikel/etymologie-short/" :content="etymologieXML" title="Etymologie" />
-        <article-fragment ext-info-url="wboe-artikel/bedeutung/" info-url="wboe-artikel/bedeutung-short/" :content="bedeutungXML" title="Bedeutung" />
-        <article-fragment ext-info-url="wboe-artikel/wortbildung/" info-url="wboe-artikel/wortbildung-short/" :content="wortbildungXML" title="Wortbildung" />
+      <v-expansion-panel class="mt-3 article-panels" @click.native="handleArticleClick" v-model="expanded" expand>
+        <article-fragment class="article-fragment" ext-info-url="wboe-artikel/verbreitung/" info-url="wboe-artikel/verbreitung-short/" :content="verbreitungXML" title="Verbreitung" />
+        <article-fragment class="article-fragment" ext-info-url="wboe-artikel/belegauswahl/" info-url="wboe-artikel/belegauswahl-short/" :content="belegauswahlXML" title="Belegauswahl" />
+        <article-fragment class="article-fragment" ext-info-url="wboe-artikel/etymologie/" info-url="wboe-artikel/etymologie-short/" :content="etymologieXML" title="Etymologie" />
+        <article-fragment class="article-fragment" ext-info-url="wboe-artikel/bedeutung/" info-url="wboe-artikel/bedeutung-short/" :content="bedeutungXML" title="Bedeutung" />
+        <article-fragment class="article-fragment" ext-info-url="wboe-artikel/wortbildung/" info-url="wboe-artikel/wortbildung-short/" :content="wortbildungXML" title="Wortbildung" />
         <article-fragment
           ext-info-url="wboe-artikel/redewendungen/"
           info-url="wboe-artikel/redewendungen-short/"
           :content="redewendungenXML"
           title="Redewendungen"
-          class="redewendungen"
+          class="article-fragment redewendungen"
         />
       </v-expansion-panel>
       <div class="text-xs-right pa-4">
@@ -162,6 +168,25 @@ export default class Article extends Vue {
     } else {
       return null
     }
+  }
+  
+  printArticle() {
+    // expand all
+    this.expanded = this.expanded.map(e => true)
+    // set pdf title, store old title
+    const oldTitle = document.title
+    document.title = 'wboe_' + this.title
+    // wait for expansion (a bit overly cautious)
+    this.$nextTick(() => {
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          // open print dialog
+          window.print()
+          // reset title
+          document.title = oldTitle
+        })
+      }, 500)
+    })
   }
 
   isPlaceNameElement(el: HTMLElement|any) {
@@ -325,6 +350,34 @@ export default class Article extends Vue {
   }
 }
 </script>
+<style lang="scss">
+
+@media print {
+  .header-navigation,
+  .footer-navigation,
+  .article-search,
+  .v-btn,
+  .v-icon,
+  .article-tools {
+    display: none
+  }
+  .article-fragment{
+    border-top: 0 !important;
+  }
+  .article-panels{
+    box-shadow: none;
+  }
+  .v-expansion-panel__header,
+  .v-expansion-panel__body{
+    padding-left: 0;
+    padding-right: 0;
+  }
+  body{
+    font-size: 14px;
+  }
+}
+</style>
+
 <style lang="scss">
 iframe.comment {
   border: none;
