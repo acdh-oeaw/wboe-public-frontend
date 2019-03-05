@@ -44,7 +44,12 @@ export default class Password extends Vue {
   submit() {
     if (this.aospdqweumkyxclkqwe !== null && (btoa(this.aospdqweumkyxclkqwe) === this.adijweoqeoqkdkwoqkk || btoa(this.aospdqweumkyxclkqwe) === this.adiuieuenslkfiwensd)) {
       this.userStore.isLoggedIn = true
-      this.userStore.showComment = btoa(this.aospdqweumkyxclkqwe) === this.adiuieuenslkfiwensd
+      this.userStore.showComment = false
+      this.userStore.articleStatus = 'proofed'
+      if (btoa(this.aospdqweumkyxclkqwe) === this.adiuieuenslkfiwensd) {
+        this.userStore.showComment = true
+        this.userStore.articleStatus = ''
+      }
       if (this.initial_url) {
         this.$router.replace(this.initial_url)
       } else {
