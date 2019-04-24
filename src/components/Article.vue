@@ -90,7 +90,7 @@
           <span>{{ editor.fullname }}</span>
         </v-tooltip>
       </div>
-      <v-flex xs12 sm12 md10 lg8 xl6 offset-md1 offset-lg2 offset-xl3 v-if="userStore.showComment">
+      <v-flex class="comment-box" xs12 sm12 md10 lg8 xl6 offset-md1 offset-lg2 offset-xl3 v-if="userStore.showComment">
         <v-card>
           <v-card-text class="pa-0">
             <iframe :src="commentUrl" class="comment"/>
@@ -351,22 +351,46 @@ export default class Article extends Vue {
 }
 </script>
 <style lang="scss">
-
 @media print {
+
+  // FIREFOX HAS A PROBLEM WITH FLEXBOX
+  // IN PRINT MODE, SO WE NEED TO (RATHER STUPIDLY)
+  // CONVERT ALL FLEX BOXES TO BLOCK BOXES BEFORE
+  // PRINTING.
+  #app,
+  .application--wrap,
+  .v-content,
+  .v-content__wrap,
+  .container,
+  .layout,
+  .flex,
+  .v-expansion-panel,
+  .article-fragment,
+  .v-expansion-panel__header,
+  .v-expansion-panel__body,
+  .v-card__text {
+    display: block !important;
+  }
+
   .header-navigation,
   .footer-navigation,
   .article-search,
   .v-btn,
   .v-icon,
+  .comment-box,
   .article-tools {
-    display: none
+    display: none !important;
   }
+
+
   .article-fragment{
     border-top: 0 !important;
   }
+
   .article-panels{
     box-shadow: none;
   }
+
   .v-expansion-panel__header,
   .v-expansion-panel__body{
     padding-left: 0;
