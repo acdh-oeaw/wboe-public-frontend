@@ -320,19 +320,20 @@ export default class Article extends Vue {
 
   initXML(xml: string) {
     const idInitials: any = {PhS: 'PS'}
-    xml = xml.split('<body>').join('').split('</body>').join('')
-    xml = this.linkParentsToCollection('ptr[type=collection]', xml)
-    xml = this.appendGrossregionViaRef('form[type=dialect] placeName[type=gemeinde], cit placeName[type=gemeinde]', xml)
-    this.lemmaXML = this.fragementFromSelector('entry > form[type=lemma], entry > gramGrp', xml)
-    this.diminutiveXML = this.fragementFromSelector('entry > form[subtype=diminutive]', xml)
-    this.bedeutungXML = this.fragementFromSelector('entry > sense', xml)
-    this.verbreitungXML = this.fragementFromSelector('entry > usg[type=geo]', xml)
-    this.belegauswahlXML = this.fragementFromSelector('entry > form[type=dialect]:not([subtype])', xml)
-    this.etymologieXML = this.fragementFromSelector('entry > etym', xml)
-    this.wortbildungXML = this.fragementFromSelector('entry > re', xml, '[subtype=compound]')
+    // the body element doesn’t go well with a HTML Parser
+    xml                   = xml.split('<body>').join('').split('</body>').join('')
+    xml                   = this.linkParentsToCollection('ptr[type=collection]', xml)
+    xml                   = this.appendGrossregionViaRef('form[type=dialect] placeName[type=gemeinde], cit placeName[type=gemeinde]', xml)
+    this.lemmaXML         = this.fragementFromSelector('entry > form[type=lemma], entry > gramGrp', xml)
+    this.diminutiveXML    = this.fragementFromSelector('entry > form[subtype=diminutive]', xml)
+    this.bedeutungXML     = this.fragementFromSelector('entry > sense', xml)
+    this.verbreitungXML   = this.fragementFromSelector('entry > usg[type=geo]', xml)
+    this.belegauswahlXML  = this.fragementFromSelector('entry > form[type=dialect]:not([subtype])', xml)
+    this.etymologieXML    = this.fragementFromSelector('entry > etym', xml)
+    this.wortbildungXML   = this.fragementFromSelector('entry > re', xml, '[subtype=compound]')
     this.redewendungenXML = this.fragementFromSelector('entry > re', xml, '[subtype=MWE]')
-    this.title = this.elementsFromDom('title', xml)[0].innerHTML
-    const aEditor = this.elementsFromDom('teiHeader > fileDesc > titleStmt > respStmt > name[ref]', xml)[0]
+    this.title            = this.elementsFromDom('title', xml)[0].innerHTML
+    const aEditor         = this.elementsFromDom('teiHeader > fileDesc > titleStmt > respStmt > name[ref]', xml)[0]
     let aInitials = aEditor.getAttribute('ref')
     aInitials = typeof aInitials === 'string' ? aInitials.substr(1) : ''
     this.editor = {
