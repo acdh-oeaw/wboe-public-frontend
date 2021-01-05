@@ -20,7 +20,7 @@
     "@rgrove/parse-xml": "^1.1.1",
     "@types/dom-to-image": "^2.6.0",
     "@types/lodash": "^4.14.118",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "body-parser": "^1.18.3",
     "codemirror": "^5.42.0",
     "compression": "^1.7.3",
