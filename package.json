@@ -22,7 +22,7 @@
     "@types/lodash": "^4.14.118",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
-    "codemirror": "^5.42.0",
+    "codemirror": "^5.58.2",
     "compression": "^1.7.3",
     "cookie-session": "^2.0.0-beta.3",
     "copy-webpack-plugin": "^4.3.1",
